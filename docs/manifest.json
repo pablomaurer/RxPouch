@@ -1,5 +1,5 @@
 {
-  "app.js": "/rxpouch/static/js/app.d903175e.js",
+  "app.js": "/rxpouch/static/js/app.d0618345.js",
   "docs-src-1-introduction.js": "/rxpouch/static/js/docs-src-1-introduction.d9a666cf.js",
   "docs-src-2-rx-pouch.js": "/rxpouch/static/js/docs-src-2-rx-pouch.28f6e809.js",
   "docs-src-3-database.js": "/rxpouch/static/js/docs-src-3-database.640117eb.js",
@@ -7,9 +7,9 @@
   "docs-src-5-changes.js": "/rxpouch/static/js/docs-src-5-changes.61e8a290.js",
   "docs-src-6-sync.js": "/rxpouch/static/js/docs-src-6-sync.07feea45.js",
   "docs-src-7-documents.js": "/rxpouch/static/js/docs-src-7-documents.785c2b90.js",
-  "docs-src-99-pouchdb.js": "/rxpouch/static/js/docs-src-99-pouchdb.16742183.js",
-  "docs-src-8-hooks.js": "/rxpouch/static/js/docs-src-8-hooks.ffa7da97.js",
+  "docs-src-8-hooks.js": "/rxpouch/static/js/docs-src-8-hooks.6ae815ba.js",
+  "docs-src-99-pouchdb.js": "/rxpouch/static/js/docs-src-99-pouchdb.1d2a5a32.js",
   "vendors.js": "/rxpouch/static/js/vendors.a640c0f2.js",
-  "runtime~app.js": "/rxpouch/static/js/runtime~app.009f9658dd107a34bc87.js",
+  "runtime~app.js": "/rxpouch/static/js/runtime~app.3a360c0b82119f504b48.js",
   "index.html": "/rxpouch/index.html"
 }
