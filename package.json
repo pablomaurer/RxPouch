@@ -1,0 +1,38 @@
+{
+  "name": "rx-pouch",
+  "version": "0.1.0",
+  "description": "Reactive PouchDB",
+  "author": "Pablo Maurer",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "files": [
+    "dist"
+  ],
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -cw",
+    "test": "jest",
+    "test-watch": "npx jest --watch",
+    "docs-dev": "docz dev",
+    "docs-build": "docz build"
+  },
+  "dependencies": {
+    "pouchdb": "^7.0.0",
+    "rxjs": "^6.3.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.1",
+    "@types/pouchdb": "^6.3.2",
+    "rollup": "^0.65.2",
+    "rollup-plugin-typescript2": "^0.17.0",
+    "docz": "^0.11.0",
+    "jest": "^23.5.0",
+    "ts-jest": "^23.1.4",
+    "typescript": "^3.0.3"
+  },
+  "peerDependencies": {
+    "rxjs": "6.x"
+  }
+}
