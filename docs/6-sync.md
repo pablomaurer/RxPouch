@@ -1,7 +1,3 @@
----
-name: 6. Sync
----
-
 # Sync
 ```js
 let sync = db.sync(remoteDB, [options]);
@@ -20,7 +16,7 @@ db.replicate.to(remoteDB, [options]);
 db.replicate.from(remoteDB, [options]);
 ```
 
-# fastSync
+# FastSync
 - replicate down
 - replicate up
 - then live sync

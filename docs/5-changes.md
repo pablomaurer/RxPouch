@@ -1,7 +1,3 @@
----
-name: 5. Changes
----
-
 # Changes
 To enable all observables, you must listen for changes. Else they will never emit anything.
 Also needed for observables in collections. *(maybe we should enable this by default?)*

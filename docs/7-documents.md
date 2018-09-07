@@ -1,7 +1,3 @@
----
-name: 7. Documents
----
-
 # Documents
 
 Any good ideas, which doesn't add too much overhead?

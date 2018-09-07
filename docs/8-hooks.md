@@ -1,7 +1,3 @@
----
-name: 8. Hooks
----
-
 # Hooks
 
 RxPouch provides following hooks either per database and per collection.
@@ -20,12 +16,12 @@ RxPouch provides following hooks either per database and per collection.
 db.addHook(EHook.PRE_SAVE,(doc) => {
     doc.modified = new Date().getTime();
     return doc;
-})
+});
 ```
 
 ```js
 // if user get's deleted, also remove he's other data.
 UserCollection.addHook(EHook.POST_REMOVE,(doc) => {
     db.remove(doc.userSettingsId);
-})
+});
 ```
