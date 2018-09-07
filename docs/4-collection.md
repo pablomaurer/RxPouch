@@ -1,7 +1,3 @@
----
-name: 4. Collection
----
-
 # Collection
 Collections are a concept to handle documents of the same type. Documents in a collection will have 
 an `id` which will be prefixed with the collection type (`id: 'collectionType-...'`). Also they will have
@@ -35,17 +31,15 @@ You can also create and edit documents without creating a collection. Using the 
 - [create, update](https://pouchdb.com/api.html#create_document)
 - [get](https://pouchdb.com/api.html#fetch_document)
 - [delete](https://pouchdb.com/api.html#delete_document)
-
 - [batch create](https://pouchdb.com/api.html#batch_create)
 - [batch fetch](https://pouchdb.com/api.html#batch_fetch)
 - [batch get](https://pouchdb.com/api.html#bulk_get)
-
 - [save attachment](https://pouchdb.com/api.html#save_attachment)
 - [get attachment](https://pouchdb.com/api.html#get_attachment)
 - [delete attachment](https://pouchdb.com/api.html#delete_attachment)
 
-## observables
-To enable tis observers, you must enable the [change listener](/docs-5-changes).
+## Observables
+!> the observer are only emitting when you enable the [change listener](/5-changes).
 
 ### changes$
 Emits all changes within the collection.
@@ -54,7 +48,7 @@ Emits all changes within the collection.
 collection.changes$.asObservable();
 ```
 
-### AllDocs$
+### allDocs$
 Emits all current docs within the collection.
 
 ```js

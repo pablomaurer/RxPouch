@@ -1,7 +1,3 @@
----
-name: 8. Hooks
----
-
 # Hooks
 
 RxPouch provides following hooks either per database and per collection.

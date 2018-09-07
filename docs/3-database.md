@@ -1,18 +1,14 @@
----
-name: 3. Database
----
-
 # Database
 
-## create
-[pouchdb](https://pouchdb.com/api.html#create_database)
+## Create
+See docs of [pouchdb](https://pouchdb.com/api.html#create_database)
 
 ```js
 const db = new RxPouch([name], [options]);
 ```
 
 ## Destroy
-[pouchdb](https://pouchdb.com/api.html#delete_database)
+See docs of [pouchdb](https://pouchdb.com/api.html#delete_database)
 cleans up all listeners and frees up memory (data will not be deleted)
 ```js
 db.destroy()
@@ -30,41 +26,39 @@ You can also create and edit documents without creating a collection. Using the 
 - [create, update](https://pouchdb.com/api.html#create_document)
 - [get](https://pouchdb.com/api.html#fetch_document)
 - [delete](https://pouchdb.com/api.html#delete_document)
-
 - [batch create](https://pouchdb.com/api.html#batch_create)
 - [batch fetch](https://pouchdb.com/api.html#batch_fetch)
 - [batch get](https://pouchdb.com/api.html#bulk_get)
-
 - [save attachment](https://pouchdb.com/api.html#save_attachment)
 - [get attachment](https://pouchdb.com/api.html#get_attachment)
 - [delete attachment](https://pouchdb.com/api.html#delete_attachment)
 
-## changes
-[pouchdb](https://pouchdb.com/api.html#changes)
+## Changes
+See docs of [pouchdb](https://pouchdb.com/api.html#changes)
 ```js
 db.changes(options)
 ```
 
-## info
-[pouchdb](https://pouchdb.com/api.html#database_information)
+## Info
+See docs of [pouchdb](https://pouchdb.com/api.html#database_information)
 ```js
 let info = await db.info()
 ```
 
-## compaction
-[pouchdb](https://pouchdb.com/api.html#compaction)
+## Compaction
+See docs of [pouchdb](https://pouchdb.com/api.html#compaction)
 ```js
 let res = db.compact(obj)
 ```
 
 
-## revision diff
-[pouchdb](https://pouchdb.com/api.html#revisions_diff)
+## Revision diff
+See docs of [pouchdb](https://pouchdb.com/api.html#revisions_diff)
 ```js
 var result = await db.revsDiff(diff, [callback])
 ```
 
-## not implemented
+## Not implemented
 Stuff for now not implemented, feel free to create a PR.
 - **indexes**
 - **ViewCleanup**

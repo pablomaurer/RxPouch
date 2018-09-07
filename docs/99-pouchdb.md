@@ -1,7 +1,3 @@
----
-name: 99. PouchDB
----
-
 # PouchDB
 
 compare PouchDB and RxPouch
