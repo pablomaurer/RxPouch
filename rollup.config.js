@@ -2,7 +2,7 @@ import typescript from 'rollup-plugin-typescript2'
 import pkg from './package.json'
 
 export default {
-    input: 'src/RxDb.ts',
+    input: 'src/Db.ts',
     output: [
         {
             file: pkg.main,
@@ -15,11 +15,14 @@ export default {
     ],
     external: [
         'rxjs',
-        'rxjs/operators'
+        'rxjs/operators',
+        './examples',
+        './tests'
     ],
     plugins: [
         typescript({
             typescript: require('typescript'),
+            exclude: ['tests/*.ts', 'examples/**/*.js', 'examples/**/*.ts']
         }),
     ],
 }

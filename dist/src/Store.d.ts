@@ -1,5 +1,5 @@
 import { IModel } from "./interfaces/IModel";
-export declare class RxStore<T extends IModel> {
+export declare class Store<T extends IModel> {
     docsSubject: any;
     private docs;
     constructor(docsSubject: any);
