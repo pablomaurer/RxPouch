@@ -1,19 +1,77 @@
-# RxPouch
-This is my implementation of RxJs powered PouchDB.
+# Introduction
 
-# Why?
- - With RxJs it's super easy to reflect database changes to the UI.
+RxPouch is [RxJs](https://github.com/ReactiveX/rxjs) powered [PouchDB](https://github.com/pouchdb/pouchdb), 
+with some additional features, but still tried to stick provide all the same base functionallities. So you
+can almost everywhere consult the [PouchDB Docs](https://pouchdb.com/api.html) for further information.
 
-# Why not RxDB
-There is already [RxDB](https://github.com/pubkey/rxdb) with a lot of more features, but they make for every 
-collection a new database. This is mostly no problem, since databases in couchdb/pouchdb are cheap.
-
-But for me I needed a solution with just one Database.
- 
 ## Installation
 ```
 npm install rx-pouch --save
 
 # peerDependencies
 npm install rxjs babel-polyfill --save
+```
+
+## Difference to RxDB
+
+Well a lot of credits goes to [RxDB](https://github.com/pubkey/rxdb), since we borrowed a lot from them.
+In RxDB every collection creates a new database, which is in `most` use-cases is perfectly fine.
+`For my use-case it wasn't.`
+
+- RxDB uses multiply databases, RxPouch uses document keys with the prefix `<collection>-` and adds to each 
+ document a property `type: '<collection>'`
+- RxDB has thei own API
+- RxPouch tried to follow the official PouchDB API as close as possible, but also added some sugar.
+- RxPouch got less features (Leader Election, Schema, Population etc..)
+- RxPouch has a different filter / sorting system
+
+## Example usage
+```js
+let RxPouch = require("rx-pouch");
+let pouchLevelDB = require("pouchdb-adapter-leveldb");
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.log('Unhandled Rejection at:', reason.stack || reason)
+});
+
+
+// add db adapter for nodejs
+RxPouch.plugin(pouchLevelDB);
+
+// create database
+let db = new RxPouch('myDB');
+
+// start listening for changes, enables all observers
+let changes = db.changes();
+changes.change$.subscribe(next => {
+    console.log('change', next);
+});
+
+// create collection
+let pokemons = db.collection('pokemon');
+
+// listen for changes
+pokemons.insert$.subscribe(next => {
+    console.log('may display an notification that there is a new pokemon');
+});
+
+pokemons.remove$.subscribe(next => {
+    console.log('may navigate away, from current pokemon page');
+});
+
+pokemons.docs$.subscribe(next => {
+    console.log('may display an up to date list of all stored pokemons');
+});
+
+// create a doc
+let pika = {
+    _id: 'pikachu', // will result in pokemon-pikachu
+    type: 'pokemon', // not needed, will be set anyway
+    name: 'Pikachu',
+    power: '120',
+    element: 'power'
+};
+
+// insert data
+pokemons.create(pika);
 ```
