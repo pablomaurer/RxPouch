@@ -16,10 +16,14 @@
     "test": "jest",
     "test-watch": "npx jest --watch",
     "docs-dev": "docz dev",
-    "docs-build": "docz build"
+    "docs-build": "docz build",
+    "update-example": "cp -R ./dist/ ./examples/node/node_modules/rx-pouch/dist/"
   },
   "dependencies": {
-    "pouchdb": "^7.0.0",
+    "pouchdb-adapter-http": "^7.0.0",
+    "pouchdb-core": "^7.0.0",
+    "pouchdb-mapreduce": "^7.0.0",
+    "pouchdb-replication": "^7.0.0",
     "rxjs": "^6.3.2"
   },
   "devDependencies": {
