@@ -1,3 +1,7 @@
+# Docs
+
+Read the [official docs](https://mnewmedia.github.io/RxPouch/#/) or look in the example directory.
+
 # Introduction
 
 RxPouch is [RxJs](https://github.com/ReactiveX/rxjs) powered [PouchDB](https://github.com/pouchdb/pouchdb), 
