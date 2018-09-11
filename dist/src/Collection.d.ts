@@ -19,9 +19,9 @@ export declare class Collection<T extends IModel> {
     addHook: (hookName: string, fn: (doc: any) => any) => void;
     private loadData;
     get(id: string): any;
-    create(doc: any): any;
-    update(doc: any): any;
-    save(doc: any): any;
-    remove(doc: any): any;
+    create(doc: any): Promise<any>;
+    update(doc: any): Promise<any>;
+    save(doc: any): Promise<void>;
+    remove(doc: any): Promise<any>;
     removeAll(): void;
 }

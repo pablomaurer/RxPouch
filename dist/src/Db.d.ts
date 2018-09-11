@@ -1,20 +1,9 @@
 /// <reference types="pouchdb-replication" />
-/// <reference types="debug" />
-/// <reference types="pouchdb-core" />
-/// <reference types="pouchdb-adapter-fruitdown" />
-/// <reference types="pouchdb-adapter-http" />
-/// <reference types="pouchdb-adapter-idb" />
-/// <reference types="pouchdb-adapter-leveldb" />
-/// <reference types="pouchdb-adapter-localstorage" />
-/// <reference types="pouchdb-adapter-memory" />
-/// <reference types="pouchdb-adapter-websql" />
-/// <reference types="pouchdb-find" />
-/// <reference types="pouchdb-mapreduce" />
 import { Sync } from "./Sync";
 import { Changes } from "./Changes";
 import { Collection } from "./Collection";
 import ReplicateOptions = PouchDB.Replication.ReplicateOptions;
-export declare class Db {
+export default class Db {
     private _name;
     private _options;
     private _hooks;
@@ -25,9 +14,9 @@ export declare class Db {
     constructor(_name: string, _options: any);
     static replicate(source: Db, target: Db, options: ReplicateOptions): Sync;
     static sync(source: Db, target: Db, options: ReplicateOptions): Sync;
-    static debug: import("debug").IDebug;
-    static plugin: (plugin: "This should be passed to PouchDB.plugin()") => PouchDB.Static;
-    static defaults: (options: PouchDB.Configuration.DatabaseConfiguration) => new <Content extends {} = {}>(name?: string, options?: PouchDB.Configuration.DatabaseConfiguration) => PouchDB.Database<Content>;
+    static debug: any;
+    static plugin: any;
+    static defaults: any;
     info: any;
     compact: any;
     revsDiff: any;
@@ -35,10 +24,10 @@ export declare class Db {
     getAttachment: any;
     removeAttachment: any;
     get: any;
-    remove(doc: any): any;
-    create(doc: any): any;
-    update(doc: any): any;
-    save(doc: any): any;
+    remove(doc: any): Promise<any>;
+    create(doc: any): Promise<any>;
+    update(doc: any): Promise<any>;
+    save(doc: any): Promise<any>;
     removeAll(): void;
     bulkGet(): any;
     bulkDocs(): any;
