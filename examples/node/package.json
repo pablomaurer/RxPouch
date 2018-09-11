@@ -9,6 +9,9 @@
   "author": "Pablo Maurer",
   "license": "MIT",
   "dependencies": {
+    "pouchdb-adapter-idb": "^7.0.0",
+    "pouchdb-adapter-leveldb": "^7.0.0",
+    "rx-pouch": "^0.1.0",
     "rxjs": "^6.3.2"
   }
 }
