@@ -1,21 +1,29 @@
-import * as PouchDB from 'pouchdb/dist/pouchdb';
+// import * as PouchDB from 'pouchdb-core';
 import {Sync} from "./Sync";
 import {Changes} from "./Changes";
 import {Collection} from "./Collection";
 import ReplicateOptions = PouchDB.Replication.ReplicateOptions;
 import {EHook, Hook} from "./Hooks";
 
-export class Db {
+const PouchDB = require('pouchdb-core')
+  .plugin(require('pouchdb-adapter-http'))
+  .plugin(require('pouchdb-mapreduce'))
+  .plugin(require('pouchdb-replication'));
+// still need to add your local pouchdb adapter:
+// browser: pouchdb-adapter-idb
+// node:    pouchdb-adapter-leveldb
+// cordova: pouchdb-adapter-websql
+
+export default class Db {
 
   private _hooks = new Hook();
 
-  public pouchdb = null;
+  public pouchdb = new PouchDB(this._name, this._options);
   public rxSync = new Sync();
   public rxChange = new Changes();
   public collections = {};
 
   constructor(private _name: string, private _options: any) {
-    this.pouchdb = new PouchDB(_name, _options);
 
     this.pouchdb.create = (doc) => {
       return this.pouchdb.put(doc).then(meta => {
@@ -76,26 +84,26 @@ export class Db {
 
   public get = this.pouchdb.get;
 
-  public remove(doc: any) {
-    doc = this._hooks.runHooks(EHook.PRE_REMOVE, doc);
+  public async remove(doc: any) {
+    doc = await this._hooks.runHooks(EHook.PRE_REMOVE, doc);
     return this.pouchdb.remove(doc).then(() =>{
       this._hooks.runHooks(EHook.POST_REMOVE, doc);
     });
   }
-  public create(doc: any) {
-    doc = this._hooks.runHooks(EHook.PRE_CREATE, doc);
+  public async create(doc: any) {
+    doc = await this._hooks.runHooks(EHook.PRE_CREATE, doc);
     return this.pouchdb.create(doc).then(() => {
       this._hooks.runHooks(EHook.POST_CREATE, doc);
     });
   }
-  public update(doc: any) {
-    doc = this._hooks.runHooks(EHook.PRE_UPDATE, doc);
+  public async update(doc: any) {
+    doc = await this._hooks.runHooks(EHook.PRE_UPDATE, doc);
     return this.pouchdb.update(doc).then(() => {
       this._hooks.runHooks(EHook.POST_UPDATE, doc);
     });
   }
-  public save(doc: any) {
-    doc = this._hooks.runHooks(EHook.PRE_SAVE, doc);
+  public async save(doc: any) {
+    doc = await this._hooks.runHooks(EHook.PRE_SAVE, doc);
     return this.pouchdb.save(doc).then(() => {
       this._hooks.runHooks(EHook.POST_SAVE, doc);
     });

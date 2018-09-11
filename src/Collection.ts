@@ -103,29 +103,32 @@ export class Collection<T extends IModel> {
     return this._pouchdb.get(id);
   }
 
-  public create(doc) {
-    doc = this._hooks.runHooks(EHook.PRE_CREATE, doc);
+  public async create(doc) {
+    doc.type = this._docType;
+    doc._id = this._docType + '-' + doc._id;
+    doc = await this._hooks.runHooks(EHook.PRE_CREATE, doc);
     return this._pouchdb.create(doc).then(() => {
       this._hooks.runHooks(EHook.POST_CREATE, doc);
     });
   }
 
-  public update(doc) {
-    doc = this._hooks.runHooks(EHook.PRE_UPDATE, doc);
+  public async update(doc) {
+    doc = await this._hooks.runHooks(EHook.PRE_UPDATE, doc);
     return this._pouchdb.update(doc).then(() => {
       this._hooks.runHooks(EHook.PRE_UPDATE, doc);
     });
   }
 
-  public save(doc) {
-    doc = this._hooks.runHooks(EHook.PRE_SAVE, doc);
-    return this._pouchdb.save(doc).then(() => {
+  public async save(doc) {
+    doc = await this._hooks.runHooks(EHook.PRE_SAVE, doc);
+    let promise = doc._rev ? this.update(doc): this.create(doc);
+    return promise.then(() => {
       this._hooks.runHooks(EHook.POST_SAVE, doc);
     });
   }
 
-  public remove(doc) {
-    doc = this._hooks.runHooks(EHook.PRE_REMOVE, doc);
+  public async remove(doc) {
+    doc = await this._hooks.runHooks(EHook.PRE_REMOVE, doc);
     return this._pouchdb.remove(doc).then(() => {
       this._hooks.runHooks(EHook.POST_REMOVE, doc);
     });
