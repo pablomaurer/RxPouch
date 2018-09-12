@@ -18,13 +18,19 @@ changes.cancel();
 
 ## change$
 ```js
-change$ = this._subjects.change.asObservable();
+changes.change$.subscribe(change => {
+    console.log('got some changes', change);
+});
 ```
 ## complete$
 ```js
-change$ = this._subjects.change.asObservable();
+changes.complete$.subscribe(complete => {
+    console.log('changes got stopped?', complete);
+});
 ```
 ## error$
 ```js
-change$ = this._subjects.change.asObservable();
+changes.error$.subscribe(error => {
+    console.log('error in changes?', error);
+});
 ```

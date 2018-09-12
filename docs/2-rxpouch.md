@@ -2,7 +2,8 @@
 
 ## Import
 ```js
-import {RxPouch} from "RxPouch";
+const RxPouch = require("rx-pouch");
+
 ```
 
 ## Replicate

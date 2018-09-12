@@ -45,40 +45,52 @@ You can also create and edit documents without creating a collection. Using the 
 Emits all changes within the collection.
 
 ```js
-collection.changes$.asObservable();
+collection.changes$.subscribe(changes => {
+    console.log('new changes', changes);
+});
 ```
 
 ### allDocs$
 Emits all current docs within the collection.
 
 ```js
-collection.allDocs$.asObservable();
+collection.allDocs$.subscribe(allDocs => {
+   console.log('allDocs', allDocs);
+});
 ```
 
 ### docs$
 Emits all current docs which passes the filter, within the collection.
 
 ```js
-collection.docs$.asObservable();
+collection.docs$.subscribe(docs => {
+    console.log('docs which are passing the filter', docs);
+});
 ```
 
 ### insert$;
 Emits all inserts within the collection.
 
 ```js
-collection.insert$.asObservable();
+collection.insert$.subscribe(doc => {
+    console.log('a doc was inserted', doc);
+});
 ```
 
 ### update$
 Emits all updates within the collection.
 
 ```js
-collection.update$.asObservable();
+collection.update$.subscribe(doc => {
+    console.log('a doc was updated', doc);
+});
 ```
 
 ### remove$
 Emits all removes within the collection.
 
 ```js
-collection.remove$.asObservable();
+collection.remove$.subscribe(doc => {
+    console.log('a doc was deleted', doc);
+});
 ```
