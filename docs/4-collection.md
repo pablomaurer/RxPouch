@@ -11,6 +11,8 @@ let options = {
     writePermission: Observable<boolean>,
     filter: Observable<any>,
     filterTypes: Observable<any>
+    sort: Observable<any>
+
 };
 let collection = db.collection('customer', options);
 ```
@@ -116,6 +118,38 @@ collection.extendComparator(customComparators);
 ```
 If you think the filter is usable for other people too, feel free to open a PR at 
 [deep-array-filter](https://github.com/mnewmedia/deep-array-filter).
+
+## Sorting
+For sorting you bassically just need to provide an object like this:
+```js
+let sortDefinition = {
+    field: 'power',
+    reverse: false
+};
+```
+This will sort ascendening by the property power. Now you just have to decide if you gonna provide it as
+an observable or if you will provide it via the `setSort` function.
+
+### Automated sorting using your observables
+You can also provide the collection with observables then it will automatically filter and sort based on 
+your observables.
+```js
+let options = {
+    filter: Observable<any>,
+    filterTypes: Observable<any>
+    sort: Observable<any>
+};
+let collection = db.collection('customer', options);
+```
+### Manual sorting using setFilter
+```js
+let sortDefinition = {
+    field: 'power',
+    reverse: false
+};
+let collection = db.collection('pokemon', options);
+collection.setSort(sortDefinition);
+```
 
 ## Observables
 !> the observer are only emitting when you enable the [change listener](/5-changes).

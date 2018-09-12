@@ -10,6 +10,7 @@ export interface IObservableOptions {
   writePermission: Observable<boolean>
   filter: Observable<any>
   filterType: Observable<any>
+  sort: Observable<any>
 }
 
 export class Collection<T extends IModel> {
@@ -20,7 +21,8 @@ export class Collection<T extends IModel> {
   private _allDocsSubject: BehaviorSubject<T[]> = new BehaviorSubject([]);
   private _store: Store<T> = new Store(this._allDocsSubject);
   private _docsSubject: BehaviorSubject<T[]> = new BehaviorSubject([]);
-  private _filterStore: Filter<T> = new Filter(this._docsSubject, this._store.getDocs(), this.observableOptions.filter, this.observableOptions.filterType);
+  private _filterStore: Filter<T> = new Filter(this._docsSubject, this._store.getDocs(),
+    this.observableOptions.filter, this.observableOptions.filterType, this.observableOptions.sort);
 
   public changes$: Observable<any>;
   public insert$: Observable<any>;

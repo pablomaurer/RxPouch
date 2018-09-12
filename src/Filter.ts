@@ -1,5 +1,11 @@
 const deepFilter = require('deep-array-filter');
+import {sort as deepSort} from 'fast-sort';
 import {IModel} from "./interfaces/IModel";
+
+export interface ISort {
+  field: string
+  reverse: boolean
+}
 
 // instead piped docs using filter, but will run filter after all changes
 export class Filter<T extends IModel> {
@@ -7,27 +13,46 @@ export class Filter<T extends IModel> {
   private _filter: any = {};
   private _filterType: any = {};
   private _comparator;
+  private _sort: ISort;
 
   private _filteredDocs: T[] = [];
 
-  // TODO Sort
-  constructor(private _docsSubject, private _allDocs: T[], private _filter$?, private _filterType$?) {
+  constructor(
+    private _docsSubject,
+    private _allDocs: T[],
+    private _filter$?,
+    private _filterType$?,
+    private _sort$?
+  ) {
     if (_filter$ && _filterType$) {
       _filter$.combineLatest(_filterType$, this.setFilter);
     }
+    _sort$.subscribe(next => {
+      this._sort = next;
+    });
   }
 
   // ------------------------------------------
-  // borrowed from store.ts - update filter store
+  // filter / store
   // ------------------------------------------
   private filter() {
     this._filteredDocs = deepFilter(this._allDocs, this._filter, this._filterType, this._comparator);
+    this.sort();
     this._docsSubject.next(this._filteredDocs);
   }
 
   private doesDocPassFilter(doc): boolean {
     let res = deepFilter([doc], this._filter, this._filterType, this._comparator);
     return !!res[0];
+  }
+
+  public sort(): T[] {
+    if (this._sort.reverse) {
+      this._filteredDocs = deepSort(this._filteredDocs).desc('firstName');
+    } else {
+      this._filteredDocs = deepSort(this._filteredDocs).asc('firstName');
+    }
+    return this._filteredDocs;
   }
 
   // ------------------------------------------
@@ -37,6 +62,11 @@ export class Filter<T extends IModel> {
     this._filter = filter;
     this._filterType = filterType;
     this.filter();
+  }
+  public setSort(sortDef: ISort) {
+    this._sort = sortDef;
+    this.sort();
+    this._docsSubject.next(this._filteredDocs);
   }
 
   public extendComparator(comparator: any) {
