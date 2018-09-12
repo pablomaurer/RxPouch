@@ -37,7 +37,7 @@ export class Filter<T extends IModel> {
   // ------------------------------------------
   private filter() {
     this._filteredDocs = deepFilter(this._allDocs, this._filter, this._filterType, this._comparator);
-    this.sort();
+    this._sort && this.sort();
     this._docsSubject.next(this._filteredDocs);
   }
 
@@ -93,6 +93,7 @@ export class Filter<T extends IModel> {
     } else {
       this.removeFromStore(model._id);
     }
+    this._sort && this.sort();
     this._docsSubject.next(this._filteredDocs);
     return found;
   }
@@ -101,6 +102,7 @@ export class Filter<T extends IModel> {
     let addDoc = this.doesDocPassFilter(model);
     if (addDoc) {
       this._filteredDocs.push(model);
+      this._sort && this.sort();
       this._docsSubject.next(this._filteredDocs);
     }
     return addDoc
