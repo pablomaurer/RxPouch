@@ -1,9 +1,7 @@
 # Docs
-
 Read the [official docs](https://mnewmedia.github.io/RxPouch/#/) or look in the example directory.
 
 # Introduction
-
 RxPouch is [RxJS](https://github.com/ReactiveX/rxjs) powered [PouchDB](https://github.com/pouchdb/pouchdb), 
 with some additional features, but still tried to provide all the same base functionallities. You can 
 almost everywhere consult the [PouchDB Docs](https://pouchdb.com/api.html) for further information.
@@ -11,13 +9,10 @@ almost everywhere consult the [PouchDB Docs](https://pouchdb.com/api.html) for f
 ## Installation
 ```
 npm install rx-pouch --save
-
-# peerDependencies
-npm install rxjs babel-polyfill --save
+npm install rxjs --save
 ```
 
 ## Difference to RxDB
-
 Well a lot of credits goes to [RxDB](https://github.com/pubkey/rxdb), since we borrowed a lot from them.
 In RxDB every collection creates a new database, which is in `most` use-cases is perfectly fine.
 `For my use-case it wasn't.`
