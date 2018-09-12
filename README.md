@@ -11,9 +11,7 @@ almost everywhere consult the [PouchDB Docs](https://pouchdb.com/api.html) for f
 ## Installation
 ```
 npm install rx-pouch --save
-
-# peerDependencies
-npm install rxjs babel-polyfill --save
+npm install rxjs --save
 ```
 
 ## Difference to RxDB
