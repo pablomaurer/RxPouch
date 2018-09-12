@@ -1,29 +1,49 @@
 import {BehaviorSubject, Observable, Subscription} from "rxjs";
 import {Store} from "./Store";
+import {Filter} from "./Filter";
 import {IModel} from "./interfaces/IModel";
 import {filter} from "rxjs/operators";
 import {EHook, Hook} from "./Hooks";
+
+export interface IObservableOptions {
+  user: Observable<string>
+  writePermission: Observable<boolean>
+  filter: Observable<any>
+  filterType: Observable<any>
+}
 
 export class Collection<T extends IModel> {
 
   private _hooks = new Hook();
   private _subs: Subscription[] = [];
+
+  private _allDocsSubject: BehaviorSubject<T[]> = new BehaviorSubject([]);
+  private _store: Store<T> = new Store(this._allDocsSubject);
   private _docsSubject: BehaviorSubject<T[]> = new BehaviorSubject([]);
-  private _rxStore: Store<T> = new Store(this._docsSubject);
+  private _filterStore: Filter<T> = new Filter(this._docsSubject, this._store.getDocs(), this.observableOptions.filter, this.observableOptions.filterType);
 
   public changes$: Observable<any>;
   public insert$: Observable<any>;
   public update$: Observable<any>;
   public remove$: Observable<any>;
   public docs$: Observable<T[]> = this._docsSubject.asObservable();
+  public allDocs$: Observable<T[]> = this._allDocsSubject.asObservable();
+
 
   // setFilter(observable)
-  // option 1 run through all docs, on change
-  // option 2 run the change on through filter and append or remove docs | requires 3 subscriptions/but still need to sort
 
   // todo change user to observable
   // todo https://stackoverflow.com/questions/35743426/async-constructor-functions-in-typescript
-  constructor(private _pouchdb, private _allChanges$, private _docType: string, private _user?: any) {
+  constructor(private _pouchdb, private _allChanges$, private _docType: string, private observableOptions: IObservableOptions) {
+
+    // todo
+    if (this.observableOptions.user) {
+    }
+
+    // todo
+    if (this.observableOptions.writePermission) {
+    }
+
     // ------------------------------------------
     // create changes$, insert$, update$, remove$
     // ------------------------------------------
@@ -46,26 +66,28 @@ export class Collection<T extends IModel> {
     // ------------------------------------------
     // create docs$
     // ------------------------------------------
-    // todo constuctor async better way?
     this.loadData().then(res => {
-      this._rxStore.setData(res);
+      this._store.setDocs(res);
     });
 
     this._subs.push(
       this.insert$.subscribe(next => {
-        this._rxStore.addToStore(next.doc)
+        this._store.addToStore(next.doc);
+        this._filterStore.addToStore(next.doc);
       })
     );
 
     this._subs.push(
       this.update$.subscribe(next => {
-        this._rxStore.updateInStore(next.doc)
+        this._store.updateInStore(next.doc);
+        this._filterStore.updateInStore(next.doc);
       })
     );
 
     this._subs.push(
       this.remove$.subscribe(next => {
-        this._rxStore.removeFromStore(next.doc)
+        this._store.removeFromStore(next.doc);
+        this._filterStore.removeFromStore(next.doc);
       })
     );
   }
@@ -74,15 +96,17 @@ export class Collection<T extends IModel> {
   // ------------------------------------------
   public destroy() {
     this._subs.forEach(sub => sub.unsubscribe());
-    this._rxStore = null;
+    this._store = null;
   }
 
   public addHook = this._hooks.addHook;
+  public setFilter = this._filterStore.setFilter;
+  public extendComparator = this._filterStore.extendComparator;
 
   private async loadData(): Promise<any[]> {
     let endkey = this._docType + '-\uffff';
-    if (this._user) {
-      endkey = this._docType + '-' + this._user.code + '\uffff'
+    if (this.observableOptions.user) {
+      endkey = this._docType + '-' + this.observableOptions.user + '\uffff'
     }
 
     let res = await this._pouchdb.allDocs({

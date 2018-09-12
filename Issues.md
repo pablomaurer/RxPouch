@@ -1,9 +1,8 @@
-- minify build
+- minify build?
 - too many module types? maybe just go for some newer, since everybody will anyway have a bundler? need help
-- pouchify steal ideas
-- check docs again
-- update readme
-- codeing
+- add badges
+- add user:string observable
+- add read_only:bool observable
 
   /**
    * usage:

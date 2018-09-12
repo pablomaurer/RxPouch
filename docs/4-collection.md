@@ -5,7 +5,14 @@ a `type` property wich contains the collectionType (`type: 'collectoinType'`).
 
 ## Create
 ```js
-let collection = db.collection('customer');
+// optinal options
+let options = {
+    user: Observable<string>,
+    writePermission: Observable<boolean>,
+    filter: Observable<any>,
+    filterTypes: Observable<any>
+};
+let collection = db.collection('customer', options);
 ```
 
 All created collections, will be cached on the `db object`, so you can also access them via `db.collectionName`.
@@ -26,8 +33,12 @@ collection.removeAll();
 ```
 
 ## CRUD
-You can also create and edit documents without creating a collection. Using the PouchDb functions:
+Beside the normal PouchDB functions, we provide you with following additions:
+- create
+- update
+- save
 
+You can still use all normal PouchDb functions:
 - [create, update](https://pouchdb.com/api.html#create_document)
 - [get](https://pouchdb.com/api.html#fetch_document)
 - [delete](https://pouchdb.com/api.html#delete_document)
@@ -37,6 +48,74 @@ You can also create and edit documents without creating a collection. Using the 
 - [save attachment](https://pouchdb.com/api.html#save_attachment)
 - [get attachment](https://pouchdb.com/api.html#get_attachment)
 - [delete attachment](https://pouchdb.com/api.html#delete_attachment)
+
+## Filtering
+
+You can filter the docs with defining a filter like:
+```js
+let pokeFilter = {
+    $: 'pokemon',
+    power: 80,
+    size: {
+        height: '100cm',
+    }
+};
+```
+- Since you did not define a the filterTypes, it will use the `includes` comparator for all search properties.
+- The `$` property it a wildcard search, so it will look if the object contains in any property `pokemon`.
+- You can use nested search
+
+Now let's assume we want all Pokemons with a greater power than 80, so for that we need to create a `filterType` object:
+```js
+let pokeFilterType = {
+    power: 'gt'
+}
+```
+All other properties still use the `includes` comparator.
+
+Read more about the filter at: [deep-array-filter](https://github.com/mnewmedia/deep-array-filter).
+
+### Automated filtering using your observables
+
+You can also provide the collection with observables of your filter and filterType, then it will automatically filter
+based on your observable.
+```js
+let options = {
+    filter: Observable<any>,
+    filterTypes: Observable<any>
+};
+let collection = db.collection('customer', options);
+```
+
+### Manual filtering using setFilter
+Instead of observable based filtering, you can also do it by manually with a function:
+```js
+let collection = db.collection('pokemon', options);
+collection.setFilter(pokeFilter, pokeFilterType);
+```
+this will rerun the filter through all docs and emit the new filtered collection via the `docs$` observable.
+
+### Comparator
+There are following base comparators
+- gt
+- lt
+- includes
+
+```js
+let filterType = {
+    age: 'customFilter'
+};
+
+let customComparators = {
+    customFilter: (value, filter) => {
+        return value > filter;
+    }
+};
+
+collection.extendComparator(customComparators);
+```
+If you think the filter is usable for other people too, feel free to open a PR at 
+[deep-array-filter](https://github.com/mnewmedia/deep-array-filter).
 
 ## Observables
 !> the observer are only emitting when you enable the [change listener](/5-changes).

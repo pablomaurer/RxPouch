@@ -20,6 +20,7 @@
     "update-example": "cp -R ./dist/ ./examples/node/node_modules/rx-pouch/dist/"
   },
   "dependencies": {
+    "deep-array-filter": "^1.0.1",
     "pouchdb-adapter-http": "^7.0.0",
     "pouchdb-core": "^7.0.0",
     "pouchdb-mapreduce": "^7.0.0",
@@ -27,9 +28,9 @@
     "rxjs": "^6.3.2"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.1",
+    "@types/jest": "^23.3.2",
     "@types/pouchdb": "^6.3.2",
-    "jest": "^23.5.0",
+    "jest": "^23.6.0",
     "rollup": "^0.65.2",
     "rollup-plugin-typescript2": "^0.17.0",
     "ts-jest": "^23.1.4",
