@@ -1,9 +1,11 @@
 {
   "name": "rx-pouch",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Reactive PouchDB",
+  "repository": "https://github.com/mnewmedia/RxPouch",
   "author": "Pablo Maurer",
   "license": "MIT",
+  "keywords": ["pouchdb", "rxjs", "couchdb"],
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "files": [
@@ -19,10 +21,27 @@
     "docs-build": "docz build",
     "update-example": "rollup -c && cp -R ./dist/ ./examples/node/node_modules/rx-pouch/dist/"
   },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "collectCoverage": true,
+    "collectCoverageFrom": ["src/**"]
+  },
   "dependencies": {
     "deep-array-filter": "^1.0.1",
     "fast-sort": "^1.5.4",
     "pouchdb-adapter-http": "^7.0.0",
+    "pouchdb-adapter-leveldb": "^7.0.0",
     "pouchdb-core": "^7.0.0",
     "pouchdb-mapreduce": "^7.0.0",
     "pouchdb-replication": "^7.0.0",

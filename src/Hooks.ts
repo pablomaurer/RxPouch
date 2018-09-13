@@ -27,13 +27,13 @@ export class Hook {
 
   }
 
-  public addHook(hookName: EHook|string, fn: ((doc: any) => any)) {
+  public addHook = (hookName: EHook|string, fn: ((doc: any) => any)) => {
     if (!this[hookName]) {
       this[hookName] = [];
     }
 
-    this.preCreate.push(fn);
-  }
+    this[hookName].push(fn);
+  };
 
   public async runHooks(hookName: EHook|string, doc: any) {
     if (!this[hookName]) return doc;

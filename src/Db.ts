@@ -23,7 +23,7 @@ export default class Db {
   public rxChange = new Changes();
   public collections = {};
 
-  constructor(private _name: string, private _options: any) {
+  constructor(private _name: string, private _options?: any) {
 
     this.pouchdb.create = (doc) => {
       return this.pouchdb.put(doc).then(meta => {
@@ -86,42 +86,36 @@ export default class Db {
 
   public async remove(doc: any) {
     doc = await this._hooks.runHooks(EHook.PRE_REMOVE, doc);
-    return this.pouchdb.remove(doc).then(() =>{
-      this._hooks.runHooks(EHook.POST_REMOVE, doc);
-    });
+    doc = await this.pouchdb.remove(doc);
+    doc = await this._hooks.runHooks(EHook.POST_REMOVE, doc);
+    return doc
   }
   public async create(doc: any) {
     doc = await this._hooks.runHooks(EHook.PRE_CREATE, doc);
-    return this.pouchdb.create(doc).then(() => {
-      this._hooks.runHooks(EHook.POST_CREATE, doc);
-    });
+    doc = await this.pouchdb.create(doc);
+    doc = await this._hooks.runHooks(EHook.POST_CREATE, doc);
+    return doc
   }
   public async update(doc: any) {
     doc = await this._hooks.runHooks(EHook.PRE_UPDATE, doc);
-    return this.pouchdb.update(doc).then(() => {
-      this._hooks.runHooks(EHook.POST_UPDATE, doc);
-    });
+    doc = await this.pouchdb.update(doc);
+    doc = this._hooks.runHooks(EHook.POST_UPDATE, doc);
+    return doc
   }
   public async save(doc: any) {
     doc = await this._hooks.runHooks(EHook.PRE_SAVE, doc);
-    return this.pouchdb.save(doc).then(() => {
-      this._hooks.runHooks(EHook.POST_SAVE, doc);
-    });
+    doc = await this.pouchdb.save(doc);
+    doc = await this._hooks.runHooks(EHook.POST_SAVE, doc);
+    return doc;
   }
 
   public removeAll() {
     // todo
   }
 
-  public bulkGet() {
-    return this.pouchdb.bulkGet;
-  }
-  public bulkDocs() {
-    return this.pouchdb.bulkDocs;
-  }
-  public allDocs() {
-    return this.pouchdb.allDocs;
-  }
+  public bulkGet = this.pouchdb.bulkGet;
+  public bulkDocs = this.pouchdb.bulkDocs;
+  public allDocs = this.pouchdb.allDocs;
 
 
   // ------------------

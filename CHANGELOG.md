@@ -1,3 +1,9 @@
+# 0.3.1
+- fixed: tests are working and ready to write
+- fixed: hooks are wokring now
+- fixed: proxying of some function where wrong
+- fixed: added repository and keywords to package.json
+
 # 0.3.0
 - fixed: filtering bug
 - feat: added nodejs filtering example

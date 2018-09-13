@@ -18,6 +18,6 @@ export declare class Hook {
     private preRemove;
     private postRemove;
     constructor();
-    addHook(hookName: EHook | string, fn: ((doc: any) => any)): void;
+    addHook: (hookName: string, fn: (doc: any) => any) => void;
     runHooks(hookName: EHook | string, doc: any): Promise<any>;
 }

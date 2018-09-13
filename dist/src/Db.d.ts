@@ -5,13 +5,13 @@ import { Collection, IObservableOptions } from "./Collection";
 import ReplicateOptions = PouchDB.Replication.ReplicateOptions;
 export default class Db {
     private _name;
-    private _options;
+    private _options?;
     private _hooks;
     pouchdb: any;
     rxSync: Sync;
     rxChange: Changes;
     collections: {};
-    constructor(_name: string, _options: any);
+    constructor(_name: string, _options?: any);
     static replicate(source: Db, target: Db, options: ReplicateOptions): Sync;
     static sync(source: Db, target: Db, options: ReplicateOptions): Sync;
     static debug: any;
@@ -29,9 +29,9 @@ export default class Db {
     update(doc: any): Promise<any>;
     save(doc: any): Promise<any>;
     removeAll(): void;
-    bulkGet(): any;
-    bulkDocs(): any;
-    allDocs(): any;
+    bulkGet: any;
+    bulkDocs: any;
+    allDocs: any;
     destroy(): void;
     addHook: (hookName: string, fn: (doc: any) => any) => void;
     sync(remoteDb: any, options: any): Sync;

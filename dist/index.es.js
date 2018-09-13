@@ -354,6 +354,7 @@ var EHook;
 })(EHook || (EHook = {}));
 var Hook = /** @class */ (function () {
     function Hook() {
+        var _this = this;
         this.preCreate = null;
         this.postCreate = null;
         this.preUpdate = null;
@@ -362,13 +363,13 @@ var Hook = /** @class */ (function () {
         this.postSave = null;
         this.preRemove = null;
         this.postRemove = null;
+        this.addHook = function (hookName, fn) {
+            if (!_this[hookName]) {
+                _this[hookName] = [];
+            }
+            _this[hookName].push(fn);
+        };
     }
-    Hook.prototype.addHook = function (hookName, fn) {
-        if (!this[hookName]) {
-            this[hookName] = [];
-        }
-        this.preCreate.push(fn);
-    };
     Hook.prototype.runHooks = function (hookName, doc) {
         return __awaiter(this, void 0, void 0, function () {
             var _i, _a, fn;
@@ -587,6 +588,9 @@ var Db = /** @class */ (function () {
         // CRUD
         // ------------------
         this.get = this.pouchdb.get;
+        this.bulkGet = this.pouchdb.bulkGet;
+        this.bulkDocs = this.pouchdb.bulkDocs;
+        this.allDocs = this.pouchdb.allDocs;
         this.addHook = this._hooks.addHook;
         this.pouchdb.create = function (doc) {
             return _this.pouchdb.put(doc).then(function (meta) {
@@ -620,75 +624,76 @@ var Db = /** @class */ (function () {
     };
     Db.prototype.remove = function (doc) {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this._hooks.runHooks(EHook.PRE_REMOVE, doc)];
                     case 1:
                         doc = _a.sent();
-                        return [2 /*return*/, this.pouchdb.remove(doc).then(function () {
-                                _this._hooks.runHooks(EHook.POST_REMOVE, doc);
-                            })];
+                        return [4 /*yield*/, this.pouchdb.remove(doc)];
+                    case 2:
+                        doc = _a.sent();
+                        return [4 /*yield*/, this._hooks.runHooks(EHook.POST_REMOVE, doc)];
+                    case 3:
+                        doc = _a.sent();
+                        return [2 /*return*/, doc];
                 }
             });
         });
     };
     Db.prototype.create = function (doc) {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this._hooks.runHooks(EHook.PRE_CREATE, doc)];
                     case 1:
                         doc = _a.sent();
-                        return [2 /*return*/, this.pouchdb.create(doc).then(function () {
-                                _this._hooks.runHooks(EHook.POST_CREATE, doc);
-                            })];
+                        return [4 /*yield*/, this.pouchdb.create(doc)];
+                    case 2:
+                        doc = _a.sent();
+                        return [4 /*yield*/, this._hooks.runHooks(EHook.POST_CREATE, doc)];
+                    case 3:
+                        doc = _a.sent();
+                        return [2 /*return*/, doc];
                 }
             });
         });
     };
     Db.prototype.update = function (doc) {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this._hooks.runHooks(EHook.PRE_UPDATE, doc)];
                     case 1:
                         doc = _a.sent();
-                        return [2 /*return*/, this.pouchdb.update(doc).then(function () {
-                                _this._hooks.runHooks(EHook.POST_UPDATE, doc);
-                            })];
+                        return [4 /*yield*/, this.pouchdb.update(doc)];
+                    case 2:
+                        doc = _a.sent();
+                        doc = this._hooks.runHooks(EHook.POST_UPDATE, doc);
+                        return [2 /*return*/, doc];
                 }
             });
         });
     };
     Db.prototype.save = function (doc) {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this._hooks.runHooks(EHook.PRE_SAVE, doc)];
                     case 1:
                         doc = _a.sent();
-                        return [2 /*return*/, this.pouchdb.save(doc).then(function () {
-                                _this._hooks.runHooks(EHook.POST_SAVE, doc);
-                            })];
+                        return [4 /*yield*/, this.pouchdb.save(doc)];
+                    case 2:
+                        doc = _a.sent();
+                        return [4 /*yield*/, this._hooks.runHooks(EHook.POST_SAVE, doc)];
+                    case 3:
+                        doc = _a.sent();
+                        return [2 /*return*/, doc];
                 }
             });
         });
     };
     Db.prototype.removeAll = function () {
         // todo
-    };
-    Db.prototype.bulkGet = function () {
-        return this.pouchdb.bulkGet;
-    };
-    Db.prototype.bulkDocs = function () {
-        return this.pouchdb.bulkDocs;
-    };
-    Db.prototype.allDocs = function () {
-        return this.pouchdb.allDocs;
     };
     // ------------------
     // methods
