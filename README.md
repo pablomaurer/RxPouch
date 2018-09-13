@@ -14,7 +14,7 @@ npm install rxjs --save
 
 ## Difference to RxDB
 Well a lot of credits goes to [RxDB](https://github.com/pubkey/rxdb), since we borrowed a lot from them.
-In RxDB every collection creates a new database, which is in `most` use-cases is perfectly fine.
+In RxDB every collection creates a new database, which is in `most` use-cases perfectly fine.
 `For my use-case it wasn't.`
 
 - RxDB uses multiply databases, RxPouch uses document keys with the prefix `<collection>-` and adds to each 
