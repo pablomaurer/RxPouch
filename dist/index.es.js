@@ -180,47 +180,165 @@ var Changes = /** @class */ (function () {
 }());
 
 var Store = /** @class */ (function () {
-    function Store(docsSubject) {
-        this.docsSubject = docsSubject;
-        this.docs = [];
+    function Store(_docsSubject) {
+        this._docsSubject = _docsSubject;
+        this._docs = [];
     }
-    Store.prototype.setData = function (docs) {
-        this.docs = docs;
+    Store.prototype.setDocs = function (docs) {
+        this._docs.length = 0;
+        this._docs.concat(docs);
     };
+    Store.prototype.getDocs = function () {
+        return this._docs;
+    };
+    // ------------------------------------------
+    // helpers
+    // ------------------------------------------
     Store.prototype.get = function (id) {
-        return this.docs.find(function (model) { return model._id === id; });
+        return this._docs.find(function (model) { return model._id === id; });
     };
     Store.prototype.getIndex = function (id) {
-        return this.docs.findIndex(function (model) { return model._id === id; });
+        return this._docs.findIndex(function (model) { return model._id === id; });
     };
     Store.prototype.first = function () {
-        return this.docs[0];
+        return this._docs[0];
     };
+    Store.prototype.last = function () {
+        return this._docs[0];
+    };
+    // ------------------------------------------
+    // store crud
+    // ------------------------------------------
     Store.prototype.updateInStore = function (model) {
         var found = false;
         var index = this.getIndex(model._id);
         if (index !== -1) {
-            this.docs[index] = model;
+            this._docs[index] = model;
             found = true;
         }
-        this.docsSubject.next(this.docs);
+        this._docsSubject.next(this._docs);
         return found;
     };
     Store.prototype.addToStore = function (model) {
-        this.docs.push(model);
-        this.docsSubject.next(this.docs);
+        this._docs.push(model);
+        this._docsSubject.next(this._docs);
     };
     Store.prototype.removeFromStore = function (id) {
         var found = false;
         var index = this.getIndex(id);
         if (index !== -1) {
-            this.docs.splice(index, 1);
+            this._docs.splice(index, 1);
             found = true;
         }
-        this.docsSubject.next(this.docs);
+        this._docsSubject.next(this._docs);
         return found;
     };
     return Store;
+}());
+
+var deepFilter = require('deep-array-filter');
+var deepSort = require('fast-sort');
+// instead piped docs using filter, but will run filter after all changes
+var Filter = /** @class */ (function () {
+    function Filter(_docsSubject, _allDocs, _filter$, _filterType$, _sort$) {
+        var _this = this;
+        this._docsSubject = _docsSubject;
+        this._allDocs = _allDocs;
+        this._filter$ = _filter$;
+        this._filterType$ = _filterType$;
+        this._sort$ = _sort$;
+        this._filter = {};
+        this._filterType = {};
+        this._filteredDocs = [];
+        // ------------------------------------------
+        // imperative style
+        // ------------------------------------------
+        this.setFilter = function (filter$$1, filterType) {
+            _this._filter = filter$$1;
+            _this._filterType = filterType;
+            _this.filter();
+        };
+        this.setSort = function (sortDef) {
+            _this._sort = sortDef;
+            _this.sort();
+            _this._docsSubject.next(_this._filteredDocs);
+        };
+        if (_filter$ && _filterType$) {
+            _filter$.combineLatest(_filterType$, this.setFilter);
+        }
+        if (_sort$) {
+            _sort$.subscribe(function (next) {
+                _this._sort = next;
+            });
+        }
+    }
+    // ------------------------------------------
+    // filter / store
+    // ------------------------------------------
+    Filter.prototype.filter = function () {
+        this._filteredDocs = deepFilter(this._allDocs, this._filter, this._filterType, this._comparator);
+        this._sort && this.sort();
+        this._docsSubject.next(this._filteredDocs);
+    };
+    Filter.prototype.doesDocPassFilter = function (doc) {
+        var res = deepFilter([doc], this._filter, this._filterType, this._comparator);
+        return !!res[0];
+    };
+    Filter.prototype.sort = function () {
+        if (this._sort.reverse) {
+            this._filteredDocs = deepSort(this._filteredDocs).desc('firstName');
+        }
+        else {
+            this._filteredDocs = deepSort(this._filteredDocs).asc('firstName');
+        }
+        return this._filteredDocs;
+    };
+    Filter.prototype.extendComparator = function (comparator) {
+        this._comparator = comparator;
+    };
+    // ------------------------------------------
+    // borrowed from store.ts - update filter store
+    // ------------------------------------------
+    Filter.prototype.getIndex = function (id) {
+        return this._filteredDocs.findIndex(function (model) { return model._id === id; });
+    };
+    Filter.prototype.updateInStore = function (model) {
+        var addDoc = this.doesDocPassFilter(model);
+        var found = false;
+        if (addDoc) {
+            var index = this.getIndex(model._id);
+            if (index !== -1) {
+                this._filteredDocs[index] = model;
+                found = true;
+            }
+        }
+        else {
+            this.removeFromStore(model._id);
+        }
+        this._sort && this.sort();
+        this._docsSubject.next(this._filteredDocs);
+        return found;
+    };
+    Filter.prototype.addToStore = function (model) {
+        var addDoc = this.doesDocPassFilter(model);
+        if (addDoc) {
+            this._filteredDocs.push(model);
+            this._sort && this.sort();
+            this._docsSubject.next(this._filteredDocs);
+        }
+        return addDoc;
+    };
+    Filter.prototype.removeFromStore = function (id) {
+        var found = false;
+        var index = this.getIndex(id);
+        if (index !== -1) {
+            this._filteredDocs.splice(index, 1);
+            found = true;
+        }
+        this._docsSubject.next(this._filteredDocs);
+        return found;
+    };
+    return Filter;
 }());
 
 var EHook;
@@ -280,23 +398,30 @@ var Hook = /** @class */ (function () {
 }());
 
 var Collection = /** @class */ (function () {
-    // setFilter(observable)
-    // option 1 run through all docs, on change
-    // option 2 run the change on through filter and append or remove docs | requires 3 subscriptions/but still need to sort
     // todo change user to observable
     // todo https://stackoverflow.com/questions/35743426/async-constructor-functions-in-typescript
-    function Collection(_pouchdb, _allChanges$, _docType, _user) {
+    function Collection(_pouchdb, _allChanges$, _docType, _observableOptions) {
+        if (_observableOptions === void 0) { _observableOptions = {}; }
         var _this = this;
         this._pouchdb = _pouchdb;
         this._allChanges$ = _allChanges$;
         this._docType = _docType;
-        this._user = _user;
+        this._observableOptions = _observableOptions;
         this._hooks = new Hook();
         this._subs = [];
+        this._allDocsSubject = new BehaviorSubject([]);
+        this._store = new Store(this._allDocsSubject);
         this._docsSubject = new BehaviorSubject([]);
-        this._rxStore = new Store(this._docsSubject);
+        this._filterStore = new Filter(this._docsSubject, this._store.getDocs(), this._observableOptions.filter, this._observableOptions.filterType, this._observableOptions.sort);
         this.docs$ = this._docsSubject.asObservable();
+        this.allDocs$ = this._allDocsSubject.asObservable();
         this.addHook = this._hooks.addHook;
+        this.setFilter = this._filterStore.setFilter;
+        this.extendComparator = this._filterStore.extendComparator;
+        // todo
+        if (this._observableOptions.user) ;
+        // todo
+        if (this._observableOptions.writePermission) ;
         // ------------------------------------------
         // create changes$, insert$, update$, remove$
         // ------------------------------------------
@@ -307,18 +432,20 @@ var Collection = /** @class */ (function () {
         // ------------------------------------------
         // create docs$
         // ------------------------------------------
-        // todo constuctor async better way?
         this.loadData().then(function (res) {
-            _this._rxStore.setData(res);
+            _this._store.setDocs(res);
         });
         this._subs.push(this.insert$.subscribe(function (next) {
-            _this._rxStore.addToStore(next.doc);
+            _this._store.addToStore(next.doc);
+            _this._filterStore.addToStore(next.doc);
         }));
         this._subs.push(this.update$.subscribe(function (next) {
-            _this._rxStore.updateInStore(next.doc);
+            _this._store.updateInStore(next.doc);
+            _this._filterStore.updateInStore(next.doc);
         }));
         this._subs.push(this.remove$.subscribe(function (next) {
-            _this._rxStore.removeFromStore(next.doc);
+            _this._store.removeFromStore(next.doc);
+            _this._filterStore.removeFromStore(next.doc);
         }));
     }
     // ------------------------------------------
@@ -326,7 +453,7 @@ var Collection = /** @class */ (function () {
     // ------------------------------------------
     Collection.prototype.destroy = function () {
         this._subs.forEach(function (sub) { return sub.unsubscribe(); });
-        this._rxStore = null;
+        this._store = null;
     };
     Collection.prototype.loadData = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -335,8 +462,8 @@ var Collection = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         endkey = this._docType + '-\uffff';
-                        if (this._user) {
-                            endkey = this._docType + '-' + this._user.code + '\uffff';
+                        if (this._observableOptions.user) {
+                            endkey = this._docType + '-' + this._observableOptions.user + '\uffff';
                         }
                         return [4 /*yield*/, this._pouchdb.allDocs({
                                 startkey: this._docType,
@@ -594,11 +721,11 @@ var Db = /** @class */ (function () {
         this.rxChange.setupListener(this.pouchdb.changes(changeOpts));
         return this.rxChange;
     };
-    Db.prototype.collection = function (docType, user) {
+    Db.prototype.collection = function (docType, observableOptions) {
         if (this.collections[docType] == docType) {
             return this.collections[docType];
         }
-        var collection = new Collection(this.pouchdb, this.rxChange.change$, docType, user);
+        var collection = new Collection(this.pouchdb, this.rxChange.change$, docType, observableOptions);
         this.collections[docType] = collection;
         return collection;
     };

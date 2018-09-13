@@ -1,5 +1,5 @@
 const deepFilter = require('deep-array-filter');
-import {sort as deepSort} from 'fast-sort';
+const deepSort = require('fast-sort');
 import {IModel} from "./interfaces/IModel";
 
 export interface ISort {
@@ -27,9 +27,11 @@ export class Filter<T extends IModel> {
     if (_filter$ && _filterType$) {
       _filter$.combineLatest(_filterType$, this.setFilter);
     }
-    _sort$.subscribe(next => {
-      this._sort = next;
-    });
+    if(_sort$) {
+      _sort$.subscribe(next => {
+        this._sort = next;
+      });
+    }
   }
 
   // ------------------------------------------
@@ -58,16 +60,16 @@ export class Filter<T extends IModel> {
   // ------------------------------------------
   // imperative style
   // ------------------------------------------
-  public setFilter(filter, filterType) {
+  public setFilter = (filter, filterType) => {
     this._filter = filter;
     this._filterType = filterType;
     this.filter();
-  }
-  public setSort(sortDef: ISort) {
+  };
+  public setSort = (sortDef: ISort) => {
     this._sort = sortDef;
     this.sort();
     this._docsSubject.next(this._filteredDocs);
-  }
+  };
 
   public extendComparator(comparator: any) {
     this._comparator = comparator

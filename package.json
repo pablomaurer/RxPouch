@@ -17,7 +17,7 @@
     "test-watch": "npx jest --watch",
     "docs-dev": "docz dev",
     "docs-build": "docz build",
-    "update-example": "cp -R ./dist/ ./examples/node/node_modules/rx-pouch/dist/"
+    "update-example": "rollup -c && cp -R ./dist/ ./examples/node/node_modules/rx-pouch/dist/"
   },
   "dependencies": {
     "deep-array-filter": "^1.0.1",

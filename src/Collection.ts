@@ -6,11 +6,11 @@ import {filter} from "rxjs/operators";
 import {EHook, Hook} from "./Hooks";
 
 export interface IObservableOptions {
-  user: Observable<string>
-  writePermission: Observable<boolean>
-  filter: Observable<any>
-  filterType: Observable<any>
-  sort: Observable<any>
+  user?: Observable<string>
+  writePermission?: Observable<boolean>
+  filter?: Observable<any>
+  filterType?: Observable<any>
+  sort?: Observable<any>
 }
 
 export class Collection<T extends IModel> {
@@ -22,7 +22,7 @@ export class Collection<T extends IModel> {
   private _store: Store<T> = new Store(this._allDocsSubject);
   private _docsSubject: BehaviorSubject<T[]> = new BehaviorSubject([]);
   private _filterStore: Filter<T> = new Filter(this._docsSubject, this._store.getDocs(),
-    this.observableOptions.filter, this.observableOptions.filterType, this.observableOptions.sort);
+    this._observableOptions.filter, this._observableOptions.filterType, this._observableOptions.sort);
 
   public changes$: Observable<any>;
   public insert$: Observable<any>;
@@ -32,18 +32,16 @@ export class Collection<T extends IModel> {
   public allDocs$: Observable<T[]> = this._allDocsSubject.asObservable();
 
 
-  // setFilter(observable)
-
   // todo change user to observable
   // todo https://stackoverflow.com/questions/35743426/async-constructor-functions-in-typescript
-  constructor(private _pouchdb, private _allChanges$, private _docType: string, private observableOptions: IObservableOptions) {
+  constructor(private _pouchdb, private _allChanges$, private _docType: string, private _observableOptions: IObservableOptions = {}) {
 
     // todo
-    if (this.observableOptions.user) {
+    if (this._observableOptions.user) {
     }
 
     // todo
-    if (this.observableOptions.writePermission) {
+    if (this._observableOptions.writePermission) {
     }
 
     // ------------------------------------------
@@ -107,8 +105,8 @@ export class Collection<T extends IModel> {
 
   private async loadData(): Promise<any[]> {
     let endkey = this._docType + '-\uffff';
-    if (this.observableOptions.user) {
-      endkey = this._docType + '-' + this.observableOptions.user + '\uffff'
+    if (this._observableOptions.user) {
+      endkey = this._docType + '-' + this._observableOptions.user + '\uffff'
     }
 
     let res = await this._pouchdb.allDocs({

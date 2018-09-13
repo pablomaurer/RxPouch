@@ -1,7 +1,7 @@
 // import * as PouchDB from 'pouchdb-core';
 import {Sync} from "./Sync";
 import {Changes} from "./Changes";
-import {Collection} from "./Collection";
+import {Collection, IObservableOptions} from "./Collection";
 import ReplicateOptions = PouchDB.Replication.ReplicateOptions;
 import {EHook, Hook} from "./Hooks";
 
@@ -162,11 +162,11 @@ export default class Db {
     return this.rxChange;
   }
 
-  public collection(docType: string, user?: string): Collection<any> {
+  public collection(docType: string, observableOptions?: IObservableOptions): Collection<any> {
     if (this.collections[docType] == docType) {
       return this.collections[docType];
     }
-    let collection = new Collection(this.pouchdb, this.rxChange.change$, docType, user);
+    let collection = new Collection(this.pouchdb, this.rxChange.change$, docType, observableOptions);
     this.collections[docType] = collection;
     return collection;
   }
