@@ -10,7 +10,7 @@ process.on('unhandledRejection', (reason, promise) => {
 RxPouch.plugin(pouchLevelDB);
 
 // create database
-let db = new RxPouch('myDB5');
+let db = new RxPouch('myDB');
 
 // start listening for changes, enables all observers
 let changes = db.changes();
