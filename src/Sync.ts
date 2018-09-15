@@ -6,10 +6,13 @@ export class Sync {
   private _subs: Subscription[] = [];
   private _subjects = {
     change: new Subject(),
-    docs: new Subject(), // todo only pushes or create docsPushed, docsPulled, doc
+    docs: new Subject(), // todo create docsPushed, docsPulled, doc
     active: new BehaviorSubject(false),
     complete: new BehaviorSubject(false),
     error: new Subject(),
+    localLastSeq: new Subject(),
+    remoteLastSeq: new Subject(),
+    remotePending: new Subject(),
   };
 
   public _isListening: boolean = false;
@@ -19,6 +22,10 @@ export class Sync {
   public active$ = this._subjects.active.asObservable();
   public complete$ = this._subjects.complete.asObservable();
   public error$ = this._subjects.error.asObservable();
+
+  public localLastSeq$ = this._subjects.localLastSeq.asObservable();
+  public remoteLastSeq$ = this._subjects.remoteLastSeq.asObservable();
+  public remotePending$ = this._subjects.remotePending.asObservable();
 
   constructor() {
 
@@ -33,8 +40,16 @@ export class Sync {
 
     // change
     this._subs.push(
-      fromEvent(this.pouchSync, 'change').subscribe(ev => {
-        this._subjects.change.next(ev)
+      fromEvent(this.pouchSync, 'change').subscribe((ev:any) => {
+        if (ev.direction == 'pull') {
+          this._subjects.remoteLastSeq.next(ev.change.last_seq); // string
+          this._subjects.remotePending.next(ev.pending);
+        }
+
+        if (ev.direction == 'push') {
+          this._subjects.localLastSeq.next(ev.change.last_seq);
+        }
+
       })
     );
 
@@ -71,17 +86,17 @@ export class Sync {
       })
     );
 
-    this.pouchSync.on('change', function (info) {
+    this.pouchSync.on('change', (info) => {
       console.log('P:change', info);
-    }).on('paused', function (err) {
+    }).on('paused', (err) => {
       console.log('P:paused', err);       // replication paused (e.g. replication up to date, user went offline)
-    }).on('active', function () {
+    }).on('active', () => {
       console.log('P:active');            // replicate resumed (e.g. new changes replicating, user went back online)
-    }).on('denied', function (err) {
+    }).on('denied', (err) => {
       console.log('P:denied', err);       // a document failed to replicate (e.g. due to permissions)
-    }).on('complete', function (info) {
+    }).on('complete', (info) => {
       console.log('P:complete', info);    // handle complete
-    }).on('error', function (err) {
+    }).on('error', (err) => {
       console.log('P:error', err);        // handle error
     });
   }

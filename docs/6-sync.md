@@ -16,28 +16,34 @@ db.replicate.to(remoteDB, [options]);
 db.replicate.from(remoteDB, [options]);
 ```
 
+# observables
+
+## change$
+
+## docs$
+
+## active$
+
+## complete$
+
+## error$
+
+## localLastSeq$
+
+## remoteLastSeq$
+
+## remotePending$
+
+
+## localPending$
+Sadly this isn't available in PouchDB at the moment.
+
 # FastSync
+todo...
+
 - replicate down
 - replicate up
 - then live sync
-
-one way:
-}).on('change', function (info) {
-}).on('paused', function (err) {
-}).on('active', function () {
-}).on('denied', function (err) {
-}).on('complete', function (info) {
-}).on('error', function (err) {
-});
-
-two way:
-}).on('change', function (info) {
-}).on('paused', function (err) {
-}).on('active', function () {
-}).on('denied', function (err) {
-}).on('complete', function (info) {
-}).on('error', function (err) {
-});
 ```
 var url = 'http://localhost:5984/mydb';
 var opts = { live: true, retry: true };
