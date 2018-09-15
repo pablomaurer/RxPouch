@@ -27,6 +27,12 @@ Destroys the collection, and cleans up all bindings.
 collection.destroy();
 ```
 
+## All
+Get all docs from db, returns array containing all docs.
+```js
+db.all();
+```
+
 ## Remove All
 Deletes all documents within a collection.
 

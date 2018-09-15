@@ -14,6 +14,12 @@ cleans up all listeners and frees up memory (data will not be deleted)
 db.destroy();
 ```
 
+## All
+Get all docs from db, returns array containing all docs.
+```js
+db.all();
+```
+
 ## Remove All
 deletes all docs from this database.
 ```js

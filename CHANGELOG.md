@@ -1,3 +1,6 @@
+# 0.5.0
+- feat: added all function to collection and db
+
 # 0.4.0
 - feat: added browser example, needs improvment
 - feat: new example about how to use synchronisation

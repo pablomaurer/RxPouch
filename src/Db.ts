@@ -115,6 +115,16 @@ export default class Db {
   public bulkDocs = this.pouchdb.bulkDocs;
   public allDocs = this.pouchdb.allDocs;
 
+  public async all() {
+    let res = await this.pouchdb.allDocs({
+      include_docs: true
+    });
+
+    return res.rows.map(row => {
+      return row.doc;
+    });
+  }
+
 
   // ------------------
   // methods

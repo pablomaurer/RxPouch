@@ -66,7 +66,7 @@ export class Collection<T extends IModel> {
     // ------------------------------------------
     // create docs$
     // ------------------------------------------
-    this.loadData().then(res => {
+    this.all().then(res => {
       this._store.setDocs(res);
     });
 
@@ -102,23 +102,6 @@ export class Collection<T extends IModel> {
   public addHook = this._hooks.addHook;
   public setFilter = this._filterStore.setFilter;
   public extendComparator = this._filterStore.extendComparator;
-
-  private async loadData(): Promise<any[]> {
-    let endkey = this._docType + '-\uffff';
-    if (this._observableOptions.user) {
-      endkey = this._docType + '-' + this._observableOptions.user + '\uffff'
-    }
-
-    let res = await this._pouchdb.allDocs({
-      startkey: this._docType,
-      endkey: endkey,
-      include_docs: true
-    });
-
-    return res.rows.map(row => {
-      return row.doc;
-    });
-  }
 
   // ------------------------------------------
   // crud
@@ -158,8 +141,25 @@ export class Collection<T extends IModel> {
     });
   }
 
-  public removeAll() {
+  public async removeAll() {
     // todo
+  }
+
+  public async all() {
+    let endkey = this._docType + '-\uffff';
+    if (this._observableOptions.user) {
+      endkey = this._docType + '-' + this._observableOptions.user + '\uffff'
+    }
+
+    let res = await this._pouchdb.allDocs({
+      startkey: this._docType,
+      endkey: endkey,
+      include_docs: true
+    });
+
+    return res.rows.map(row => {
+      return row.doc;
+    });
   }
 
 
