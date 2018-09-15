@@ -34,9 +34,9 @@ export default class Db {
     allDocs: any;
     destroy(): void;
     addHook: (hookName: string, fn: (doc: any) => any) => void;
-    sync(remoteDb: any, options: any): Sync;
-    replicateTo(remoteDb: any, options: any): Sync;
-    replicateFrom(remoteDb: any, options: any): Sync;
+    sync(remoteDb: Db, options?: any): Sync;
+    replicateTo(remoteDb: any, options?: any): Sync;
+    replicateFrom(remoteDb: any, options?: any): Sync;
     changes(): Changes;
     collection(docType: string, observableOptions?: IObservableOptions): Collection<any>;
 }

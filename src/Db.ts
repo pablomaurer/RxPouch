@@ -1,4 +1,3 @@
-// import * as PouchDB from 'pouchdb-core';
 import {Sync} from "./Sync";
 import {Changes} from "./Changes";
 import {Collection, IObservableOptions} from "./Collection";
@@ -81,7 +80,6 @@ export default class Db {
   // ------------------
   // CRUD
   // ------------------
-
   public get = this.pouchdb.get;
 
   public async remove(doc: any) {
@@ -122,6 +120,7 @@ export default class Db {
   // methods
   // ------------------
   public destroy() {
+    // todo
     // stop sync
     // stop changelistener
     // cleanup all collections
@@ -130,18 +129,18 @@ export default class Db {
 
   public addHook = this._hooks.addHook;
 
-  public sync(remoteDb, options) {
-    this.rxSync.setupListener(this.pouchdb.sync(remoteDb, options));
+  public sync(remoteDb: Db, options?) {
+    this.rxSync.setupListener(this.pouchdb.sync(remoteDb.pouchdb, options));
     return this.rxSync;
   }
 
-  public replicateTo(remoteDb, options) {
-    this.rxSync.setupListener(this.pouchdb.replicate(remoteDb, options));
+  public replicateTo(remoteDb, options?) {
+    this.rxSync.setupListener(this.pouchdb.replicate.to(remoteDb.pouchdb, options));
     return this.rxSync;
   }
 
-  public replicateFrom(remoteDb, options) {
-    this.rxSync.setupListener(this.pouchdb.replicate(remoteDb, options));
+  public replicateFrom(remoteDb, options?) {
+    this.rxSync.setupListener(this.pouchdb.replicate.from(remoteDb.pouchdb, options));
     return this.rxSync;
   }
 

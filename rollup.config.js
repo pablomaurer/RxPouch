@@ -17,7 +17,8 @@ export default {
         'rxjs',
         'rxjs/operators',
         './examples',
-        './tests'
+        './tests',
+        './__tests__'
     ],
     plugins: [
         typescript({

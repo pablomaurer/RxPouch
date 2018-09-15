@@ -8,6 +8,9 @@ export declare class Sync {
     active$: import("rxjs/internal/Observable").Observable<boolean>;
     complete$: import("rxjs/internal/Observable").Observable<boolean>;
     error$: import("rxjs/internal/Observable").Observable<{}>;
+    localLastSeq$: import("rxjs/internal/Observable").Observable<{}>;
+    remoteLastSeq$: import("rxjs/internal/Observable").Observable<{}>;
+    remotePending$: import("rxjs/internal/Observable").Observable<{}>;
     constructor();
     setupListener(pouchSync: any): void;
     cancel(): void;

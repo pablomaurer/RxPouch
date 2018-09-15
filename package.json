@@ -1,11 +1,15 @@
 {
   "name": "rx-pouch",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Reactive PouchDB",
   "repository": "https://github.com/mnewmedia/RxPouch",
   "author": "Pablo Maurer",
   "license": "MIT",
-  "keywords": ["pouchdb", "rxjs", "couchdb"],
+  "keywords": [
+    "pouchdb",
+    "rxjs",
+    "couchdb"
+  ],
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "files": [
@@ -35,7 +39,9 @@
       "node"
     ],
     "collectCoverage": true,
-    "collectCoverageFrom": ["src/**"]
+    "collectCoverageFrom": [
+      "src/**"
+    ]
   },
   "dependencies": {
     "deep-array-filter": "^1.0.1",

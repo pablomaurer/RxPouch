@@ -1,3 +1,8 @@
+# 0.4.0
+- feat: added browser example, needs improvment
+- feat: new example about how to use synchronisation
+- feat: sync class has new observers: localLastSeq$, remoteLastSeq$, remotePending$
+
 # 0.3.1
 - fixed: tests are working and ready to write
 - fixed: hooks are wokring now

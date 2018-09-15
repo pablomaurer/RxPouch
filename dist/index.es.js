@@ -62,6 +62,9 @@ var Sync = /** @class */ (function () {
             active: new BehaviorSubject(false),
             complete: new BehaviorSubject(false),
             error: new Subject(),
+            localLastSeq: new Subject(),
+            remoteLastSeq: new Subject(),
+            remotePending: new Subject(),
         };
         this._isListening = false;
         this.change$ = this._subjects.change.asObservable();
@@ -69,6 +72,9 @@ var Sync = /** @class */ (function () {
         this.active$ = this._subjects.active.asObservable();
         this.complete$ = this._subjects.complete.asObservable();
         this.error$ = this._subjects.error.asObservable();
+        this.localLastSeq$ = this._subjects.localLastSeq.asObservable();
+        this.remoteLastSeq$ = this._subjects.remoteLastSeq.asObservable();
+        this.remotePending$ = this._subjects.remotePending.asObservable();
     }
     Sync.prototype.setupListener = function (pouchSync) {
         var _this = this;
@@ -79,7 +85,13 @@ var Sync = /** @class */ (function () {
         this._isListening = true;
         // change
         this._subs.push(fromEvent(this.pouchSync, 'change').subscribe(function (ev) {
-            _this._subjects.change.next(ev);
+            if (ev.direction == 'pull') {
+                _this._subjects.remoteLastSeq.next(ev.change.last_seq); // string
+                _this._subjects.remotePending.next(ev.pending);
+            }
+            if (ev.direction == 'push') {
+                _this._subjects.localLastSeq.next(ev.change.last_seq);
+            }
         }));
         // docs
         this._subs.push(fromEvent(this.pouchSync, 'change').subscribe(function (ev) {
@@ -699,21 +711,22 @@ var Db = /** @class */ (function () {
     // methods
     // ------------------
     Db.prototype.destroy = function () {
+        // todo
         // stop sync
         // stop changelistener
         // cleanup all collections
         // cleanup all syncs
     };
     Db.prototype.sync = function (remoteDb, options) {
-        this.rxSync.setupListener(this.pouchdb.sync(remoteDb, options));
+        this.rxSync.setupListener(this.pouchdb.sync(remoteDb.pouchdb, options));
         return this.rxSync;
     };
     Db.prototype.replicateTo = function (remoteDb, options) {
-        this.rxSync.setupListener(this.pouchdb.replicate(remoteDb, options));
+        this.rxSync.setupListener(this.pouchdb.replicate.to(remoteDb.pouchdb, options));
         return this.rxSync;
     };
     Db.prototype.replicateFrom = function (remoteDb, options) {
-        this.rxSync.setupListener(this.pouchdb.replicate(remoteDb, options));
+        this.rxSync.setupListener(this.pouchdb.replicate.from(remoteDb.pouchdb, options));
         return this.rxSync;
     };
     Db.prototype.changes = function () {
