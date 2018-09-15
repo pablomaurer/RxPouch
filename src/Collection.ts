@@ -142,7 +142,11 @@ export class Collection<T extends IModel> {
   }
 
   public async removeAll() {
-    // todo
+    return this.all().then(docs => {
+        return Promise.all(docs.map((doc) => {
+          return this._pouchdb.remove(doc)
+        }))
+      })
   }
 
   public async all() {

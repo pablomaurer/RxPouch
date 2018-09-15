@@ -108,7 +108,11 @@ export default class Db {
   }
 
   public removeAll() {
-    // todo
+    return this.all().then(docs => {
+      return Promise.all(docs.map((doc) => {
+        return this.pouchdb.remove(doc)
+      }))
+    })
   }
 
   public bulkGet = this.pouchdb.bulkGet;
