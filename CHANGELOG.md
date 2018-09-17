@@ -1,5 +1,8 @@
 # 0.5.0
 - feat: added all function to collection and db
+- feat: added removeAll function to collection an db
+- fix: ship with full pouchdb bundle, until I figure out a solution for 
+[PouchDB issue #7263](https://github.com/pouchdb/pouchdb/issues/7263)
 
 # 0.4.0
 - feat: added browser example, needs improvment
