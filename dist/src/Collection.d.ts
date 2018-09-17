@@ -29,11 +29,11 @@ export declare class Collection<T extends IModel> {
     addHook: (hookName: string, fn: (doc: any) => any) => void;
     setFilter: (filter: any, filterType: any) => void;
     extendComparator: (comparator: any) => void;
-    private loadData;
     get(id: string): any;
     create(doc: any): Promise<any>;
     update(doc: any): Promise<any>;
     save(doc: any): Promise<void>;
     remove(doc: any): Promise<any>;
-    removeAll(): void;
+    removeAll(): Promise<[{}, {}, {}, {}, {}, {}, {}, {}, {}, {}]>;
+    all(): Promise<any>;
 }

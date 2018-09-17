@@ -28,10 +28,11 @@ export default class Db {
     create(doc: any): Promise<any>;
     update(doc: any): Promise<any>;
     save(doc: any): Promise<any>;
-    removeAll(): void;
+    removeAll(): Promise<[{}, {}, {}, {}, {}, {}, {}, {}, {}, {}]>;
     bulkGet: any;
     bulkDocs: any;
     allDocs: any;
+    all(): Promise<any>;
     destroy(): void;
     addHook: (hookName: string, fn: (doc: any) => any) => void;
     sync(remoteDb: Db, options?: any): Sync;

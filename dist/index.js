@@ -447,7 +447,7 @@ var Collection = /** @class */ (function () {
         // ------------------------------------------
         // create docs$
         // ------------------------------------------
-        this.loadData().then(function (res) {
+        this.all().then(function (res) {
             _this._store.setDocs(res);
         });
         this._subs.push(this.insert$.subscribe(function (next) {
@@ -469,30 +469,6 @@ var Collection = /** @class */ (function () {
     Collection.prototype.destroy = function () {
         this._subs.forEach(function (sub) { return sub.unsubscribe(); });
         this._store = null;
-    };
-    Collection.prototype.loadData = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var endkey, res;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        endkey = this._docType + '-\uffff';
-                        if (this._observableOptions.user) {
-                            endkey = this._docType + '-' + this._observableOptions.user + '\uffff';
-                        }
-                        return [4 /*yield*/, this._pouchdb.allDocs({
-                                startkey: this._docType,
-                                endkey: endkey,
-                                include_docs: true
-                            })];
-                    case 1:
-                        res = _a.sent();
-                        return [2 /*return*/, res.rows.map(function (row) {
-                                return row.doc;
-                            })];
-                }
-            });
-        });
     };
     // ------------------------------------------
     // crud
@@ -566,7 +542,40 @@ var Collection = /** @class */ (function () {
         });
     };
     Collection.prototype.removeAll = function () {
-        // todo
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.all().then(function (docs) {
+                        return Promise.all(docs.map(function (doc) {
+                            return _this._pouchdb.remove(doc);
+                        }));
+                    })];
+            });
+        });
+    };
+    Collection.prototype.all = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var endkey, res;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        endkey = this._docType + '-\uffff';
+                        if (this._observableOptions.user) {
+                            endkey = this._docType + '-' + this._observableOptions.user + '\uffff';
+                        }
+                        return [4 /*yield*/, this._pouchdb.allDocs({
+                                startkey: this._docType,
+                                endkey: endkey,
+                                include_docs: true
+                            })];
+                    case 1:
+                        res = _a.sent();
+                        return [2 /*return*/, res.rows.map(function (row) {
+                                return row.doc;
+                            })];
+                }
+            });
+        });
     };
     return Collection;
 }());
@@ -707,7 +716,29 @@ var Db = /** @class */ (function () {
         });
     };
     Db.prototype.removeAll = function () {
-        // todo
+        var _this = this;
+        return this.all().then(function (docs) {
+            return Promise.all(docs.map(function (doc) {
+                return _this.pouchdb.remove(doc);
+            }));
+        });
+    };
+    Db.prototype.all = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var res;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.pouchdb.allDocs({
+                            include_docs: true
+                        })];
+                    case 1:
+                        res = _a.sent();
+                        return [2 /*return*/, res.rows.map(function (row) {
+                                return row.doc;
+                            })];
+                }
+            });
+        });
     };
     // ------------------
     // methods
