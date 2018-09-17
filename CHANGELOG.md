@@ -1,3 +1,6 @@
+# 0.5.1
+- fix: bad require, because of switch to full pouchdb bundle
+
 # 0.5.0
 - feat: added all function to collection and db
 - feat: added removeAll function to collection an db

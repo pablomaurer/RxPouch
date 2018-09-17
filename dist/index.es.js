@@ -578,10 +578,11 @@ var Collection = /** @class */ (function () {
     return Collection;
 }());
 
-var PouchDB = require('pouchdb-core')
-    .plugin(require('pouchdb-adapter-http'))
-    .plugin(require('pouchdb-mapreduce'))
-    .plugin(require('pouchdb-replication'));
+var PouchDB = require('pouchdb');
+//const PouchDB = require('pouchdb-core')
+//.plugin(require('pouchdb-adapter-http'))
+//.plugin(require('pouchdb-mapreduce'))
+//.plugin(require('pouchdb-replication'));
 // still need to add your local pouchdb adapter:
 // browser: pouchdb-adapter-idb
 // node:    pouchdb-adapter-leveldb

@@ -4,10 +4,13 @@ import {Collection, IObservableOptions} from "./Collection";
 import ReplicateOptions = PouchDB.Replication.ReplicateOptions;
 import {EHook, Hook} from "./Hooks";
 
-const PouchDB = require('pouchdb-core')
-  .plugin(require('pouchdb-adapter-http'))
-  .plugin(require('pouchdb-mapreduce'))
-  .plugin(require('pouchdb-replication'));
+const PouchDB = require('pouchdb');
+
+//const PouchDB = require('pouchdb-core')
+  //.plugin(require('pouchdb-adapter-http'))
+  //.plugin(require('pouchdb-mapreduce'))
+  //.plugin(require('pouchdb-replication'));
+
 // still need to add your local pouchdb adapter:
 // browser: pouchdb-adapter-idb
 // node:    pouchdb-adapter-leveldb
