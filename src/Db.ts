@@ -1,7 +1,6 @@
 import {Sync} from "./Sync";
 import {Changes} from "./Changes";
-import {Collection, IObservableOptions} from "./Collection";
-import ReplicateOptions = PouchDB.Replication.ReplicateOptions;
+import {Collection, ICollectionRxOptions} from "./Collection";
 import {EHook, Hook} from "./Hooks";
 
 const PouchDB = require('pouchdb');
@@ -52,12 +51,12 @@ export default class Db {
   // ------------------
   // statics
   // ------------------
-  public static replicate(source: Db, target: Db, options: ReplicateOptions) {
+  public static replicate(source: Db, target: Db, options: any) {
     source.replicateTo(target, options);
     return source.rxSync;
   }
 
-  public static sync(source: Db, target: Db, options: ReplicateOptions) {
+  public static sync(source: Db, target: Db, options: any) {
     source.sync(target, options);
     return source.rxSync;
   }
@@ -172,7 +171,7 @@ export default class Db {
     return this.rxChange;
   }
 
-  public collection(docType: string, observableOptions?: IObservableOptions): Collection<any> {
+  public collection(docType: string, observableOptions?: ICollectionRxOptions): Collection<any> {
     if (this.collections[docType] == docType) {
       return this.collections[docType];
     }
