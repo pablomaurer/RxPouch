@@ -1,3 +1,7 @@
+# 0.6.1
+- chore: rollup config, exclude tests and temp dir
+- fix: uptade build
+
 # 0.6.0
 - fix: removed pouchdb types, because first need to figure out how to ship them
 - fix: sort used parameters to sort

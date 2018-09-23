@@ -193,15 +193,16 @@ var Changes = /** @class */ (function () {
 
 var Store = /** @class */ (function () {
     function Store(_docsSubject) {
+        var _this = this;
         this._docsSubject = _docsSubject;
         this._docs = [];
+        this.getDocs = function () {
+            return _this._docs;
+        };
     }
     Store.prototype.setDocs = function (docs) {
-        this._docs.length = 0;
-        this._docs.concat(docs);
-    };
-    Store.prototype.getDocs = function () {
-        return this._docs;
+        this._docs = docs;
+        this._docsSubject.next(this._docs);
     };
     // ------------------------------------------
     // helpers
@@ -252,10 +253,10 @@ var deepFilter = require('deep-array-filter');
 var deepSort = require('fast-sort');
 // instead piped docs using filter, but will run filter after all changes
 var Filter = /** @class */ (function () {
-    function Filter(_docsSubject, _allDocs, _filter$, _filterType$, _sort$) {
+    function Filter(_docsSubject, _getAllDocs, _filter$, _filterType$, _sort$) {
         var _this = this;
         this._docsSubject = _docsSubject;
-        this._allDocs = _allDocs;
+        this._getAllDocs = _getAllDocs;
         this._filter$ = _filter$;
         this._filterType$ = _filterType$;
         this._sort$ = _sort$;
@@ -275,20 +276,28 @@ var Filter = /** @class */ (function () {
             _this.sort();
             _this._docsSubject.next(_this._filteredDocs);
         };
-        if (_filter$ && _filterType$) {
-            _filter$.combineLatest(_filterType$, this.setFilter);
+        this.extendComparator = function (comparator) {
+            _this._comparator = comparator;
+        };
+        // use init, beacause we need to wait for data to be loaded
+    }
+    Filter.prototype._init = function () {
+        var _this = this;
+        this._docsSubject.next(this._getAllDocs());
+        if (this._filter$ && this._filterType$) {
+            this._filter$.combineLatest(this._filterType$, this.setFilter);
         }
-        if (_sort$) {
-            _sort$.subscribe(function (next) {
+        if (this._sort$) {
+            this._sort$.subscribe(function (next) {
                 _this._sort = next;
             });
         }
-    }
+    };
     // ------------------------------------------
     // filter / store
     // ------------------------------------------
     Filter.prototype.filter = function () {
-        this._filteredDocs = deepFilter(this._allDocs, this._filter, this._filterType, this._comparator);
+        this._filteredDocs = deepFilter(this._getAllDocs(), this._filter, this._filterType, this._comparator);
         this._sort && this.sort();
         this._docsSubject.next(this._filteredDocs);
     };
@@ -298,15 +307,12 @@ var Filter = /** @class */ (function () {
     };
     Filter.prototype.sort = function () {
         if (this._sort.reverse) {
-            this._filteredDocs = deepSort(this._filteredDocs).desc('firstName');
+            this._filteredDocs = deepSort(this._filteredDocs).desc(this._sort.field);
         }
         else {
-            this._filteredDocs = deepSort(this._filteredDocs).asc('firstName');
+            this._filteredDocs = deepSort(this._filteredDocs).asc(this._sort.field);
         }
         return this._filteredDocs;
-    };
-    Filter.prototype.extendComparator = function (comparator) {
-        this._comparator = comparator;
     };
     // ------------------------------------------
     // borrowed from store.ts - update filter store
@@ -412,8 +418,8 @@ var Hook = /** @class */ (function () {
 
 var Collection = /** @class */ (function () {
     // todo change user to observable
-    // todo https://stackoverflow.com/questions/35743426/async-constructor-functions-in-typescript
     function Collection(_pouchdb, _allChanges$, _docType, _observableOptions) {
+        // todo observable filters
         if (_observableOptions === void 0) { _observableOptions = {}; }
         var _this = this;
         this._pouchdb = _pouchdb;
@@ -423,18 +429,18 @@ var Collection = /** @class */ (function () {
         this._hooks = new Hook();
         this._subs = [];
         this._allDocsSubject = new BehaviorSubject([]);
-        this._store = new Store(this._allDocsSubject);
         this._docsSubject = new BehaviorSubject([]);
-        this._filterStore = new Filter(this._docsSubject, this._store.getDocs(), this._observableOptions.filter, this._observableOptions.filterType, this._observableOptions.sort);
         this.docs$ = this._docsSubject.asObservable();
         this.allDocs$ = this._allDocsSubject.asObservable();
         this.addHook = this._hooks.addHook;
-        this.setFilter = this._filterStore.setFilter;
-        this.extendComparator = this._filterStore.extendComparator;
-        // todo
-        if (this._observableOptions.user) ;
-        // todo
-        if (this._observableOptions.writePermission) ;
+        this.setFilter = this._filter.setFilter;
+        this.setSort = this._filter.setSort;
+        this.extendComparator = this._filter.extendComparator;
+        if (this._observableOptions.user) {
+            this._observableOptions.user.subscribe(function (next) {
+                _this.loadDocs();
+            });
+        }
         // ------------------------------------------
         // create changes$, insert$, update$, remove$
         // ------------------------------------------
@@ -442,31 +448,51 @@ var Collection = /** @class */ (function () {
         this.insert$ = this.changes$.pipe(filter(function (change) { return change.op === 'INSERT'; }));
         this.update$ = this.changes$.pipe(filter(function (change) { return change.op === 'UPDATE'; }));
         this.remove$ = this.changes$.pipe(filter(function (change) { return change.op === 'REMOVE'; }));
-        // ------------------------------------------
-        // create docs$
-        // ------------------------------------------
+    }
+    // ------------------------------------------
+    // live docs$
+    // ------------------------------------------
+    Collection.prototype.enableLiveDocs = function () {
+        var _this = this;
+        if (this._store)
+            return;
+        this._store = new Store(this._allDocsSubject);
+        this._filter = new Filter(this._docsSubject, this._store.getDocs, this._observableOptions.filter, this._observableOptions.filterType, this._observableOptions.sort);
         this.all().then(function (res) {
             _this._store.setDocs(res);
         });
         this._subs.push(this.insert$.subscribe(function (next) {
             _this._store.addToStore(next.doc);
-            _this._filterStore.addToStore(next.doc);
+            _this._filter.addToStore(next.doc);
         }));
         this._subs.push(this.update$.subscribe(function (next) {
             _this._store.updateInStore(next.doc);
-            _this._filterStore.updateInStore(next.doc);
+            _this._filter.updateInStore(next.doc);
         }));
         this._subs.push(this.remove$.subscribe(function (next) {
             _this._store.removeFromStore(next.doc);
-            _this._filterStore.removeFromStore(next.doc);
+            _this._filter.removeFromStore(next.doc);
         }));
-    }
+    };
+    Collection.prototype.disableLiveDocs = function () {
+        if (!this._store)
+            return;
+        this._subs.forEach(function (sub) { return sub.unsubscribe(); });
+        this._filter = null;
+        this._store = null;
+    };
     // ------------------------------------------
     // methods
     // ------------------------------------------
+    Collection.prototype.loadDocs = function () {
+        var _this = this;
+        this.all().then(function (res) {
+            _this._store.setDocs(res);
+            _this._filter._init();
+        });
+    };
     Collection.prototype.destroy = function () {
-        this._subs.forEach(function (sub) { return sub.unsubscribe(); });
-        this._store = null;
+        this.disableLiveDocs();
     };
     // ------------------------------------------
     // crud
@@ -578,6 +604,7 @@ var Collection = /** @class */ (function () {
     return Collection;
 }());
 
+//import PouchDB from 'pouchdb';
 var PouchDB = require('pouchdb');
 //const PouchDB = require('pouchdb-core')
 //.plugin(require('pouchdb-adapter-http'))

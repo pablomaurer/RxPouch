@@ -3,7 +3,8 @@ import {Changes} from "./Changes";
 import {Collection, ICollectionRxOptions} from "./Collection";
 import {EHook, Hook} from "./Hooks";
 
-import PouchDB from 'pouchdb';
+//import PouchDB from 'pouchdb';
+const PouchDB = require('pouchdb');
 
 //const PouchDB = require('pouchdb-core')
   //.plugin(require('pouchdb-adapter-http'))

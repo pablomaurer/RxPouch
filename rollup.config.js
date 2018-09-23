@@ -16,14 +16,11 @@ export default {
     external: [
         'rxjs',
         'rxjs/operators',
-        './examples',
-        './tests',
-        './__tests__'
     ],
     plugins: [
         typescript({
             typescript: require('typescript'),
-            exclude: ['tests/*.ts', 'examples/**/*.js', 'examples/**/*.ts']
+            exclude: ['tests/*.ts', '__tests__/*.ts', 'temp/*.ts', 'examples/**/*.js', 'examples/**/*.ts']
         }),
     ],
 }

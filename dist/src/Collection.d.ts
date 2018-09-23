@@ -1,8 +1,7 @@
 import { Observable } from "rxjs";
 import { IModel } from "./interfaces/IModel";
-export interface IObservableOptions {
+export interface ICollectionRxOptions {
     user?: Observable<string>;
-    writePermission?: Observable<boolean>;
     filter?: Observable<any>;
     filterType?: Observable<any>;
     sort?: Observable<any>;
@@ -15,19 +14,23 @@ export declare class Collection<T extends IModel> {
     private _hooks;
     private _subs;
     private _allDocsSubject;
-    private _store;
     private _docsSubject;
-    private _filterStore;
+    private _store;
+    private _filter;
     changes$: Observable<any>;
     insert$: Observable<any>;
     update$: Observable<any>;
     remove$: Observable<any>;
     docs$: Observable<T[]>;
     allDocs$: Observable<T[]>;
-    constructor(_pouchdb: any, _allChanges$: any, _docType: string, _observableOptions?: IObservableOptions);
+    constructor(_pouchdb: any, _allChanges$: any, _docType: string, _observableOptions?: ICollectionRxOptions);
+    enableLiveDocs(): void;
+    disableLiveDocs(): void;
+    loadDocs(): void;
     destroy(): void;
     addHook: (hookName: string, fn: (doc: any) => any) => void;
     setFilter: (filter: any, filterType: any) => void;
+    setSort: (sortDef: import("./Filter").ISort) => void;
     extendComparator: (comparator: any) => void;
     get(id: string): any;
     create(doc: any): Promise<any>;

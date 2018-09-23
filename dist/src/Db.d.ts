@@ -1,8 +1,6 @@
-/// <reference types="pouchdb-replication" />
 import { Sync } from "./Sync";
 import { Changes } from "./Changes";
-import { Collection, IObservableOptions } from "./Collection";
-import ReplicateOptions = PouchDB.Replication.ReplicateOptions;
+import { Collection, ICollectionRxOptions } from "./Collection";
 export default class Db {
     private _name;
     private _options?;
@@ -12,8 +10,8 @@ export default class Db {
     rxChange: Changes;
     collections: {};
     constructor(_name: string, _options?: any);
-    static replicate(source: Db, target: Db, options: ReplicateOptions): Sync;
-    static sync(source: Db, target: Db, options: ReplicateOptions): Sync;
+    static replicate(source: Db, target: Db, options: any): Sync;
+    static sync(source: Db, target: Db, options: any): Sync;
     static debug: any;
     static plugin: any;
     static defaults: any;
@@ -39,5 +37,5 @@ export default class Db {
     replicateTo(remoteDb: any, options?: any): Sync;
     replicateFrom(remoteDb: any, options?: any): Sync;
     changes(): Changes;
-    collection(docType: string, observableOptions?: IObservableOptions): Collection<any>;
+    collection(docType: string, observableOptions?: ICollectionRxOptions): Collection<any>;
 }
