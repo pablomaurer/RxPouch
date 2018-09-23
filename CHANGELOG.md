@@ -1,3 +1,14 @@
+# 0.6.0
+- fix: removed pouchdb types, because first need to figure out how to ship them
+- fix: sort used parameters to sort
+- fix: moved write permission to db-level instead collection-level
+- fix: reload collection data if provided user-observable emits new data
+- fix: function extendComparator to be a var so you it can be proxied from db-level to collection-level
+- feat: $docs observable must now be manually enabled and disabled for perfomance reasons
+ - else it would add 3 by default activated subscriptions per collection (cpu)
+ - else it would store all docs as an array and a filtered array per collection (memory)
+- chore: updated packages
+
 # 0.5.1
 - fix: bad require, because of switch to full pouchdb bundle
 
@@ -5,7 +16,7 @@
 - feat: added all function to collection and db
 - feat: added removeAll function to collection an db
 - fix: ship with full pouchdb bundle, until I figure out a solution for 
-[PouchDB issue #7263](https://github.com/pouchdb/pouchdb/issues/7263)
+[PouchDB issue #7263](https://github.com/pouchdb/pouchdb/issues/7263) #7299
 
 # 0.4.0
 - feat: added browser example, needs improvment

@@ -1,3 +1,6 @@
+# Under heavy development
+You can use it, but stuff might still changes quickly, until we are at version 1.0.0
+
 # Docs
 Read the [official docs](https://mnewmedia.github.io/RxPouch/#/) or look in the example directory.
 

@@ -3,7 +3,7 @@
 - add badges
 - add user:string observable
 - add read_only:bool observable
-
+- sync with live:false, should also be a promise, can it be sync/promise at the same time?
   /**
    * usage:
    *
