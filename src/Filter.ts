@@ -71,9 +71,9 @@ export class Filter<T extends IModel> {
     this._docsSubject.next(this._filteredDocs);
   };
 
-  public extendComparator(comparator: any) {
+  public extendComparator = (comparator: any) => {
     this._comparator = comparator
-  }
+  };
 
   // ------------------------------------------
   // borrowed from store.ts - update filter store
