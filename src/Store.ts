@@ -8,13 +8,13 @@ export class Store<T extends IModel> {
   }
 
   public setDocs(docs: any[]) {
-    this._docs.length = 0;
-    this._docs.concat(docs);
+    this._docs = docs;
+    this._docsSubject.next(this._docs);
   }
 
-  public getDocs() {
+  public getDocs = () => {
     return this._docs;
-  }
+  };
 
   // ------------------------------------------
   // helpers

@@ -5,7 +5,7 @@ import {IModel} from "./interfaces/IModel";
 import {filter} from "rxjs/operators";
 import {EHook, Hook} from "./Hooks";
 
-export interface IObservableOptions {
+export interface ICollectionRxOptions {
   user?: Observable<string>
   filter?: Observable<any>
   filterType?: Observable<any>
@@ -18,10 +18,9 @@ export class Collection<T extends IModel> {
   private _subs: Subscription[] = [];
 
   private _allDocsSubject: BehaviorSubject<T[]> = new BehaviorSubject([]);
-  private _store: Store<T> = new Store(this._allDocsSubject);
   private _docsSubject: BehaviorSubject<T[]> = new BehaviorSubject([]);
-  private _filterStore: Filter<T> = new Filter(this._docsSubject, this._store.getDocs(),
-    this._observableOptions.filter, this._observableOptions.filterType, this._observableOptions.sort);
+  private _store: Store<T>;
+  private _filter: Filter<T>;
 
   public changes$: Observable<any>;
   public insert$: Observable<any>;
@@ -32,11 +31,14 @@ export class Collection<T extends IModel> {
 
 
   // todo change user to observable
-  // todo https://stackoverflow.com/questions/35743426/async-constructor-functions-in-typescript
-  constructor(private _pouchdb, private _allChanges$, private _docType: string, private _observableOptions: IObservableOptions = {}) {
+  constructor(private _pouchdb, private _allChanges$, private _docType: string, private _observableOptions: ICollectionRxOptions = {}) {
 
-    // todo
+    // todo observable filters
+
     if (this._observableOptions.user) {
+      this._observableOptions.user.subscribe(next => {
+        this.loadDocs();
+      });
     }
 
     // ------------------------------------------
@@ -57,10 +59,18 @@ export class Collection<T extends IModel> {
     this.remove$ = this.changes$.pipe(
       filter((change: any) => change.op === 'REMOVE')
     );
+  }
 
-    // ------------------------------------------
-    // create docs$
-    // ------------------------------------------
+  // ------------------------------------------
+  // live docs$
+  // ------------------------------------------
+  public enableLiveDocs() {
+    if (this._store) return;
+
+    this._store = new Store(this._allDocsSubject);
+    this._filter = new Filter(this._docsSubject, this._store.getDocs,
+      this._observableOptions.filter, this._observableOptions.filterType, this._observableOptions.sort);
+
     this.all().then(res => {
       this._store.setDocs(res);
     });
@@ -68,35 +78,50 @@ export class Collection<T extends IModel> {
     this._subs.push(
       this.insert$.subscribe(next => {
         this._store.addToStore(next.doc);
-        this._filterStore.addToStore(next.doc);
+        this._filter.addToStore(next.doc);
       })
     );
 
     this._subs.push(
       this.update$.subscribe(next => {
         this._store.updateInStore(next.doc);
-        this._filterStore.updateInStore(next.doc);
+        this._filter.updateInStore(next.doc);
       })
     );
 
     this._subs.push(
       this.remove$.subscribe(next => {
         this._store.removeFromStore(next.doc);
-        this._filterStore.removeFromStore(next.doc);
+        this._filter.removeFromStore(next.doc);
       })
     );
   }
-  // ------------------------------------------
-  // methods
-  // ------------------------------------------
-  public destroy() {
+
+  public disableLiveDocs() {
+    if (!this._store) return;
     this._subs.forEach(sub => sub.unsubscribe());
+    this._filter = null;
     this._store = null;
   }
 
+  // ------------------------------------------
+  // methods
+  // ------------------------------------------
+  public loadDocs() {
+    this.all().then(res => {
+      this._store.setDocs(res);
+      this._filter._init();
+    });
+  }
+
+  public destroy() {
+    this.disableLiveDocs();
+  }
+
   public addHook = this._hooks.addHook;
-  public setFilter = this._filterStore.setFilter;
-  public extendComparator = this._filterStore.extendComparator;
+  public setFilter = this._filter.setFilter;
+  public setSort = this._filter.setSort;
+  public extendComparator = this._filter.extendComparator;
 
   // ------------------------------------------
   // crud
@@ -138,10 +163,10 @@ export class Collection<T extends IModel> {
 
   public async removeAll() {
     return this.all().then(docs => {
-        return Promise.all(docs.map((doc) => {
-          return this._pouchdb.remove(doc)
-        }))
-      })
+      return Promise.all(docs.map((doc) => {
+        return this._pouchdb.remove(doc)
+      }))
+    })
   }
 
   public async all() {

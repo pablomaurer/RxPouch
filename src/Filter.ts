@@ -19,16 +19,22 @@ export class Filter<T extends IModel> {
 
   constructor(
     private _docsSubject,
-    private _allDocs: T[],
+    private _getAllDocs: () => T[],
     private _filter$?,
     private _filterType$?,
     private _sort$?
   ) {
-    if (_filter$ && _filterType$) {
-      _filter$.combineLatest(_filterType$, this.setFilter);
+    // use init, beacause we need to wait for data to be loaded
+  }
+
+  public _init() {
+    this._docsSubject.next(this._getAllDocs());
+
+    if (this._filter$ && this._filterType$) {
+      this._filter$.combineLatest(this._filterType$, this.setFilter);
     }
-    if(_sort$) {
-      _sort$.subscribe(next => {
+    if(this._sort$) {
+      this._sort$.subscribe(next => {
         this._sort = next;
       });
     }
@@ -38,7 +44,7 @@ export class Filter<T extends IModel> {
   // filter / store
   // ------------------------------------------
   private filter() {
-    this._filteredDocs = deepFilter(this._allDocs, this._filter, this._filterType, this._comparator);
+    this._filteredDocs = deepFilter(this._getAllDocs(), this._filter, this._filterType, this._comparator);
     this._sort && this.sort();
     this._docsSubject.next(this._filteredDocs);
   }
