@@ -50,9 +50,9 @@ export class Filter<T extends IModel> {
 
   public sort(): T[] {
     if (this._sort.reverse) {
-      this._filteredDocs = deepSort(this._filteredDocs).desc('firstName');
+      this._filteredDocs = deepSort(this._filteredDocs).desc(this._sort.field);
     } else {
-      this._filteredDocs = deepSort(this._filteredDocs).asc('firstName');
+      this._filteredDocs = deepSort(this._filteredDocs).asc(this._sort.field);
     }
     return this._filteredDocs;
   }
