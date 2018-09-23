@@ -7,7 +7,6 @@ import {EHook, Hook} from "./Hooks";
 
 export interface IObservableOptions {
   user?: Observable<string>
-  writePermission?: Observable<boolean>
   filter?: Observable<any>
   filterType?: Observable<any>
   sort?: Observable<any>
@@ -38,10 +37,6 @@ export class Collection<T extends IModel> {
 
     // todo
     if (this._observableOptions.user) {
-    }
-
-    // todo
-    if (this._observableOptions.writePermission) {
     }
 
     // ------------------------------------------
