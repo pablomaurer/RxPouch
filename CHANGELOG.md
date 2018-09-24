@@ -1,3 +1,10 @@
+# 0.6.3
+- chore: downgrade to rxjs 5, so I an use it in ionic 3 - needs maybe two branches with both versions
+- fix: added missing cleanup's on destroy
+
+# 0.6.2
+- fix: checked all destroy functions and implemented missing cleanups
+
 # 0.6.1
 - chore: rollup config, exclude tests and temp dir
 - fix: uptade build

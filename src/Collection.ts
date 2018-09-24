@@ -16,6 +16,7 @@ export class Collection<T extends IModel> {
 
   private _hooks = new Hook();
   private _subs: Subscription[] = [];
+  private _subsOpts: Subscription[] = [];
 
   private _allDocsSubject: BehaviorSubject<T[]> = new BehaviorSubject([]);
   private _docsSubject: BehaviorSubject<T[]> = new BehaviorSubject([]);
@@ -36,9 +37,11 @@ export class Collection<T extends IModel> {
     // todo observable filters
 
     if (this._observableOptions.user) {
-      this._observableOptions.user.subscribe(next => {
-        this.loadDocs();
-      });
+        this._subsOpts.push(
+          this._observableOptions.user.subscribe(next => {
+          this.loadDocs();
+        })
+      );
     }
 
     // ------------------------------------------
@@ -64,16 +67,15 @@ export class Collection<T extends IModel> {
   // ------------------------------------------
   // live docs$
   // ------------------------------------------
-  public enableLiveDocs() {
+  public async enableLiveDocs() {
     if (this._store) return;
 
     this._store = new Store(this._allDocsSubject);
     this._filter = new Filter(this._docsSubject, this._store.getDocs,
       this._observableOptions.filter, this._observableOptions.filterType, this._observableOptions.sort);
 
-    this.all().then(res => {
-      this._store.setDocs(res);
-    });
+    let res = await this.all();
+    this._store.setDocs(res);
 
     this._subs.push(
       this.insert$.subscribe(next => {
@@ -95,6 +97,8 @@ export class Collection<T extends IModel> {
         this._filter.removeFromStore(next.doc);
       })
     );
+
+    return res;
   }
 
   public disableLiveDocs() {
@@ -116,6 +120,7 @@ export class Collection<T extends IModel> {
 
   public destroy() {
     this.disableLiveDocs();
+    this._subsOpts.forEach(sub => sub.unsubscribe());
   }
 
   public addHook = this._hooks.addHook;

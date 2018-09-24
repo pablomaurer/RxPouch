@@ -3,7 +3,6 @@ import {Changes} from "./Changes";
 import {Collection, ICollectionRxOptions} from "./Collection";
 import {EHook, Hook} from "./Hooks";
 
-//import PouchDB from 'pouchdb';
 const PouchDB = require('pouchdb');
 
 //const PouchDB = require('pouchdb-core')
@@ -137,11 +136,9 @@ export default class Db {
   // methods
   // ------------------
   public destroy() {
-    // todo
-    // stop sync
-    // stop changelistener
-    // cleanup all collections
-    // cleanup all syncs
+    Object.keys(this.collections).forEach(key => this.collections[key].destroy());
+    this.rxChange.cancel();
+    this.rxSync.cancel();
   }
 
   public addHook = this._hooks.addHook;

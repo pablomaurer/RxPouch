@@ -1,4 +1,5 @@
-import {BehaviorSubject, fromEvent, Subject, Subscription} from "rxjs";
+import {BehaviorSubject, Subject, Subscription} from "rxjs";
+import {fromEvent} from "rxjs/observable/fromEvent";
 
 export class Changes {
 
@@ -56,7 +57,7 @@ export class Changes {
   }
 
   public cancel() {
-    this.pouchChanges.cancel();
+    this.pouchChanges && this.pouchChanges.cancel();
     this.pouchChanges = null;
     this._isListening= false;
 

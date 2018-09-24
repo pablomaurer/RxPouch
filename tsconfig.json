@@ -13,5 +13,6 @@
       "es2017",
       "dom"
     ]
-  }
+  },
+  "exclude": ["tests/*.ts", "__tests__/*.ts", "temp/*.ts", "examples/**/*.js", "examples/**/*.ts"]
 }

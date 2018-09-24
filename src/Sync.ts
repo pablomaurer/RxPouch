@@ -1,4 +1,5 @@
-import {BehaviorSubject, fromEvent, Subject, Subscription} from "rxjs";
+import {BehaviorSubject, Subject, Subscription} from "rxjs";
+import {fromEvent} from "rxjs/observable/fromEvent";
 
 export class Sync {
 
@@ -102,7 +103,7 @@ export class Sync {
   }
 
   public cancel() {
-    this.pouchSync.cancel();
+    this.pouchSync && this.pouchSync.cancel();
     this.pouchSync = null;
     this._isListening = false;
     // TODO: why need this? isn't cancel() syncronus? does rxdb also need this?
