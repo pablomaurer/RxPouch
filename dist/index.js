@@ -482,7 +482,6 @@ var Collection = /** @class */ (function () {
                         if (this.isLiveDocsEnabled)
                             return [2 /*return*/];
                         this.isLiveDocsEnabled = true;
-                        console.info('ENABLE again');
                         return [4 /*yield*/, this.loadDocs()];
                     case 1:
                         res = _a.sent();
@@ -506,7 +505,6 @@ var Collection = /** @class */ (function () {
     Collection.prototype.disableLiveDocs = function () {
         if (!this.isLiveDocsEnabled)
             return;
-        console.info('DISABLE again');
         this.isLiveDocsEnabled = false;
         this._subs.forEach(function (sub) { return sub.unsubscribe(); });
         this._filter.destroy();
@@ -615,7 +613,6 @@ var Collection = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.log('------------------------------------------------------------------------');
                         endkey = this._docType + '-\uffff';
                         if (!this._observableOptions.user) return [3 /*break*/, 2];
                         return [4 /*yield*/, this._observableOptions.user.first(function (user) { return user; }).toPromise()];
