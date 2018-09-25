@@ -1,11 +1,8 @@
+import {ISort} from "./interfaces/ISort";
+
 const deepFilter = require('deep-array-filter');
 const deepSort = require('fast-sort');
 import {IModel} from "./interfaces/IModel";
-
-export interface ISort {
-  field: string
-  reverse: boolean
-}
 
 // instead piped docs using filter, but will run filter after all changes
 export class Filter<T extends IModel> {
@@ -71,6 +68,7 @@ export class Filter<T extends IModel> {
     this._filterType = filterType;
     this.filter();
   };
+
   public setSort = (sortDef: ISort) => {
     this._sort = sortDef;
     this.sort();

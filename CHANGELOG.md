@@ -1,3 +1,7 @@
+# 0.6.6
+- fix: set types for collection.setSort explicit, to avoid strange import in type definitions
+- refactor: use user observable in a more rxjs-y way
+
 # 0.6.5
 - fix: don't set filter and store to null, only set the data in them to null, so you can proxy to them
 

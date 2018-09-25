@@ -4,6 +4,7 @@ import {Filter} from "./Filter";
 import {IModel} from "./interfaces/IModel";
 import {filter} from "rxjs/operators";
 import {EHook, Hook} from "./Hooks";
+import {ISort} from "./interfaces/ISort";
 
 export interface ICollectionRxOptions {
   user?: Observable<string>
@@ -31,10 +32,7 @@ export class Collection<T extends IModel> {
   public docs$: Observable<T[]> = this._docsSubject.asObservable();
   public allDocs$: Observable<T[]> = this._allDocsSubject.asObservable();
 
-  public isLiveDocsEnabled: boolean = false;
-
-  // todo rxjs get out current value, instead this? but if you want to also support declarative way leave it here
-  private user: string;
+  private isLiveDocsEnabled: boolean = false;
 
 
   constructor(private _pouchdb, private _allChanges$, private _docType: string, private _observableOptions: ICollectionRxOptions = {}) {
@@ -44,8 +42,7 @@ export class Collection<T extends IModel> {
     if (this._observableOptions.user) {
       this._subsOpts.push(
         this._observableOptions.user.subscribe(next => {
-          this.user = next;
-          this.loadDocs();
+          this.isLiveDocsEnabled && this.loadDocs();
         })
       );
     }
@@ -77,8 +74,7 @@ export class Collection<T extends IModel> {
     if (this.isLiveDocsEnabled) return;
     this.isLiveDocsEnabled = true;
 
-    let res = await this.all();
-    this._store.setDocs(res);
+    let res = await this.loadDocs();
 
     this._subs.push(
       this.insert$.subscribe(next => {
@@ -114,8 +110,8 @@ export class Collection<T extends IModel> {
   // ------------------------------------------
   // methods
   // ------------------------------------------
-  public loadDocs() {
-    this.all().then(res => {
+  private loadDocs() {
+    return this.all().then(res => {
       this._store.setDocs(res);
       this._filter._init();
     });
@@ -128,7 +124,8 @@ export class Collection<T extends IModel> {
 
   public addHook = this._hooks.addHook;
   public setFilter = this._filter.setFilter;
-  public setSort = this._filter.setSort;
+  // else it generates type definitoin with strange import
+  public setSort: (sortFields: ISort) => void = this._filter.setSort;
   public extendComparator = this._filter.extendComparator;
 
   // ------------------------------------------
@@ -179,8 +176,9 @@ export class Collection<T extends IModel> {
 
   public async all() {
     let endkey = this._docType + '-\uffff';
-    if (this.user) {
-      endkey = this._docType + '-' + this.user + '\uffff'
+    if (this._observableOptions.user) {
+      let user = await this._observableOptions.user.first(num => !!num).toPromise();
+      endkey = this._docType + '-' + user + '\uffff'
     }
 
     let res = await this._pouchdb.allDocs({

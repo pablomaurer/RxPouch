@@ -1,8 +1,5 @@
+import { ISort } from "./interfaces/ISort";
 import { IModel } from "./interfaces/IModel";
-export interface ISort {
-    field: string;
-    reverse: boolean;
-}
 export declare class Filter<T extends IModel> {
     private _docsSubject;
     private _getAllDocs;

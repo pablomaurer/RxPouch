@@ -453,12 +453,12 @@ var Collection = /** @class */ (function () {
         this.isLiveDocsEnabled = false;
         this.addHook = this._hooks.addHook;
         this.setFilter = this._filter.setFilter;
+        // else it generates type definitoin with strange import
         this.setSort = this._filter.setSort;
         this.extendComparator = this._filter.extendComparator;
         if (this._observableOptions.user) {
             this._subsOpts.push(this._observableOptions.user.subscribe(function (next) {
-                _this.user = next;
-                _this.loadDocs();
+                _this.isLiveDocsEnabled && _this.loadDocs();
             }));
         }
         // ------------------------------------------
@@ -482,10 +482,9 @@ var Collection = /** @class */ (function () {
                         if (this.isLiveDocsEnabled)
                             return [2 /*return*/];
                         this.isLiveDocsEnabled = true;
-                        return [4 /*yield*/, this.all()];
+                        return [4 /*yield*/, this.loadDocs()];
                     case 1:
                         res = _a.sent();
-                        this._store.setDocs(res);
                         this._subs.push(this.insert$.subscribe(function (next) {
                             _this._store.addToStore(next.doc);
                             _this._filter.addToStore(next.doc);
@@ -515,7 +514,7 @@ var Collection = /** @class */ (function () {
     // ------------------------------------------
     Collection.prototype.loadDocs = function () {
         var _this = this;
-        this.all().then(function (res) {
+        return this.all().then(function (res) {
             _this._store.setDocs(res);
             _this._filter._init();
         });
@@ -609,20 +608,23 @@ var Collection = /** @class */ (function () {
     };
     Collection.prototype.all = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var endkey, res;
+            var endkey, user, res;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         endkey = this._docType + '-\uffff';
-                        if (this.user) {
-                            endkey = this._docType + '-' + this.user + '\uffff';
-                        }
-                        return [4 /*yield*/, this._pouchdb.allDocs({
-                                startkey: this._docType,
-                                endkey: endkey,
-                                include_docs: true
-                            })];
+                        if (!this._observableOptions.user) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this._observableOptions.user.first(function (num) { return !!num; }).toPromise()];
                     case 1:
+                        user = _a.sent();
+                        endkey = this._docType + '-' + user + '\uffff';
+                        _a.label = 2;
+                    case 2: return [4 /*yield*/, this._pouchdb.allDocs({
+                            startkey: this._docType,
+                            endkey: endkey,
+                            include_docs: true
+                        })];
+                    case 3:
                         res = _a.sent();
                         return [2 /*return*/, res.rows.map(function (row) {
                                 return row.doc;
