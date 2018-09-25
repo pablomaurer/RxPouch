@@ -1,8 +1,8 @@
 import { IModel } from "./interfaces/IModel";
 export declare class Store<T extends IModel> {
-    private _docsSubject;
+    private _allDocsSubject;
     private _docs;
-    constructor(_docsSubject: any);
+    constructor(_allDocsSubject: any);
     setDocs(docs: any[]): void;
     getDocs: () => T[];
     destroy(): void;

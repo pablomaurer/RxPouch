@@ -199,9 +199,9 @@ var Changes = /** @class */ (function () {
 }());
 
 var Store = /** @class */ (function () {
-    function Store(_docsSubject) {
+    function Store(_allDocsSubject) {
         var _this = this;
-        this._docsSubject = _docsSubject;
+        this._allDocsSubject = _allDocsSubject;
         this._docs = [];
         this.getDocs = function () {
             return _this._docs;
@@ -209,7 +209,7 @@ var Store = /** @class */ (function () {
     }
     Store.prototype.setDocs = function (docs) {
         this._docs = docs;
-        this._docsSubject.next(this._docs);
+        this._allDocsSubject.next(this._docs);
     };
     Store.prototype.destroy = function () {
         this._docs = [];
@@ -239,12 +239,12 @@ var Store = /** @class */ (function () {
             this._docs[index] = model;
             found = true;
         }
-        this._docsSubject.next(this._docs);
+        this._allDocsSubject.next(this._docs);
         return found;
     };
     Store.prototype.addToStore = function (model) {
         this._docs.push(model);
-        this._docsSubject.next(this._docs);
+        this._allDocsSubject.next(this._docs);
     };
     Store.prototype.removeFromStore = function (id) {
         var found = false;
@@ -253,7 +253,7 @@ var Store = /** @class */ (function () {
             this._docs.splice(index, 1);
             found = true;
         }
-        this._docsSubject.next(this._docs);
+        this._allDocsSubject.next(this._docs);
         return found;
     };
     return Store;
@@ -457,7 +457,7 @@ var Collection = /** @class */ (function () {
         this.setSort = this._filter.setSort;
         this.extendComparator = this._filter.extendComparator;
         if (this._observableOptions.user) {
-            this._subsOpts.push(this._observableOptions.user.subscribe(function (next) {
+            this._subsOpts.push(this._observableOptions.user.filter(function (user) { return user; }).subscribe(function (next) {
                 _this.isLiveDocsEnabled && _this.loadDocs();
             }));
         }
@@ -482,6 +482,7 @@ var Collection = /** @class */ (function () {
                         if (this.isLiveDocsEnabled)
                             return [2 /*return*/];
                         this.isLiveDocsEnabled = true;
+                        console.info('ENABLE again');
                         return [4 /*yield*/, this.loadDocs()];
                     case 1:
                         res = _a.sent();
@@ -505,6 +506,8 @@ var Collection = /** @class */ (function () {
     Collection.prototype.disableLiveDocs = function () {
         if (!this.isLiveDocsEnabled)
             return;
+        console.info('DISABLE again');
+        this.isLiveDocsEnabled = false;
         this._subs.forEach(function (sub) { return sub.unsubscribe(); });
         this._filter.destroy();
         this._store.destroy();
@@ -612,9 +615,10 @@ var Collection = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        console.log('------------------------------------------------------------------------');
                         endkey = this._docType + '-\uffff';
                         if (!this._observableOptions.user) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this._observableOptions.user.first(function (num) { return !!num; }).toPromise()];
+                        return [4 /*yield*/, this._observableOptions.user.first(function (user) { return user; }).toPromise()];
                     case 1:
                         user = _a.sent();
                         endkey = this._docType + '-' + user + '\uffff';

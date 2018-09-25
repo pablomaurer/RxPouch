@@ -41,7 +41,7 @@ export class Collection<T extends IModel> {
 
     if (this._observableOptions.user) {
       this._subsOpts.push(
-        this._observableOptions.user.subscribe(next => {
+        this._observableOptions.user.filter(user => user as any).subscribe(next => {
           this.isLiveDocsEnabled && this.loadDocs();
         })
       );
@@ -102,6 +102,7 @@ export class Collection<T extends IModel> {
 
   public disableLiveDocs() {
     if (!this.isLiveDocsEnabled) return;
+    this.isLiveDocsEnabled = false;
     this._subs.forEach(sub => sub.unsubscribe());
     this._filter.destroy();
     this._store.destroy();
@@ -177,7 +178,7 @@ export class Collection<T extends IModel> {
   public async all() {
     let endkey = this._docType + '-\uffff';
     if (this._observableOptions.user) {
-      let user = await this._observableOptions.user.first(num => !!num).toPromise();
+      let user = await this._observableOptions.user.first(user => user as any).toPromise();
       endkey = this._docType + '-' + user + '\uffff'
     }
 
