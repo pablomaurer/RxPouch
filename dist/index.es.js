@@ -418,7 +418,6 @@ var Hook = /** @class */ (function () {
 }());
 
 var Collection = /** @class */ (function () {
-    // todo change user to observable
     function Collection(_pouchdb, _allChanges$, _docType, _observableOptions) {
         // todo observable filters
         if (_observableOptions === void 0) { _observableOptions = {}; }
@@ -440,6 +439,7 @@ var Collection = /** @class */ (function () {
         this.extendComparator = this._filter.extendComparator;
         if (this._observableOptions.user) {
             this._subsOpts.push(this._observableOptions.user.subscribe(function (next) {
+                _this.user = next;
                 _this.loadDocs();
             }));
         }
@@ -597,8 +597,8 @@ var Collection = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         endkey = this._docType + '-\uffff';
-                        if (this._observableOptions.user) {
-                            endkey = this._docType + '-' + this._observableOptions.user + '\uffff';
+                        if (this.user) {
+                            endkey = this._docType + '-' + this.user + '\uffff';
                         }
                         return [4 /*yield*/, this._pouchdb.allDocs({
                                 startkey: this._docType,

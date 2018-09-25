@@ -1,4 +1,4 @@
-import {BehaviorSubject, Subject, Subscription} from "rxjs";
+import {BehaviorSubject, Observable, Subject, Subscription} from "rxjs";
 import {fromEvent} from "rxjs/observable/fromEvent";
 
 export class Changes {
@@ -14,9 +14,9 @@ export class Changes {
 
   public _isListening: boolean = false;
 
-  public change$ = this._subjects.change.asObservable();
-  public complete$ = this._subjects.complete.asObservable();
-  public error$ = this._subjects.error.asObservable();
+  public change$: Observable<any> = this._subjects.change.asObservable();
+  public complete$: Observable<any> = this._subjects.complete.asObservable();
+  public error$: Observable<any> = this._subjects.error.asObservable();
 
   constructor() {
 

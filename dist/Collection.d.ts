@@ -24,6 +24,7 @@ export declare class Collection<T extends IModel> {
     remove$: Observable<any>;
     docs$: Observable<T[]>;
     allDocs$: Observable<T[]>;
+    private user;
     constructor(_pouchdb: any, _allChanges$: any, _docType: string, _observableOptions?: ICollectionRxOptions);
     enableLiveDocs(): Promise<any>;
     disableLiveDocs(): void;

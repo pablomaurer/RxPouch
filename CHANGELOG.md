@@ -1,3 +1,6 @@
+# 0.6.3
+- fixed wrongly generated types for observables
+
 # 0.6.2
 - chore: downgrade to rxjs 5, so I an use it in ionic 3 - needs maybe two branches with both versions
 - fix: checked all destroy functions and implemented missing cleanups

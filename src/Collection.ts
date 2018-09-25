@@ -30,15 +30,18 @@ export class Collection<T extends IModel> {
   public docs$: Observable<T[]> = this._docsSubject.asObservable();
   public allDocs$: Observable<T[]> = this._allDocsSubject.asObservable();
 
+  // todo rxjs get out current value, instead this? but if you want to also support declarative way leave it here
+  private user: string;
 
-  // todo change user to observable
+
   constructor(private _pouchdb, private _allChanges$, private _docType: string, private _observableOptions: ICollectionRxOptions = {}) {
 
     // todo observable filters
 
     if (this._observableOptions.user) {
-        this._subsOpts.push(
-          this._observableOptions.user.subscribe(next => {
+      this._subsOpts.push(
+        this._observableOptions.user.subscribe(next => {
+          this.user = next;
           this.loadDocs();
         })
       );
@@ -176,8 +179,8 @@ export class Collection<T extends IModel> {
 
   public async all() {
     let endkey = this._docType + '-\uffff';
-    if (this._observableOptions.user) {
-      endkey = this._docType + '-' + this._observableOptions.user + '\uffff'
+    if (this.user) {
+      endkey = this._docType + '-' + this.user + '\uffff'
     }
 
     let res = await this._pouchdb.allDocs({

@@ -1,11 +1,12 @@
+import { Observable } from "rxjs";
 export declare class Changes {
     private pouchChanges;
     private _subs;
     private _subjects;
     _isListening: boolean;
-    change$: import("rxjs/Observable").Observable<{}>;
-    complete$: import("rxjs/Observable").Observable<boolean>;
-    error$: import("rxjs/Observable").Observable<{}>;
+    change$: Observable<any>;
+    complete$: Observable<any>;
+    error$: Observable<any>;
     constructor();
     setupListener(pouchChanges: any): void;
     cancel(): void;

@@ -1,4 +1,4 @@
-import {BehaviorSubject, Subject, Subscription} from "rxjs";
+import {BehaviorSubject, Observable, Subject, Subscription} from "rxjs";
 import {fromEvent} from "rxjs/observable/fromEvent";
 
 export class Sync {
@@ -18,15 +18,15 @@ export class Sync {
 
   public _isListening: boolean = false;
 
-  public change$ = this._subjects.change.asObservable();
-  public docs$ = this._subjects.docs.asObservable();
-  public active$ = this._subjects.active.asObservable();
-  public complete$ = this._subjects.complete.asObservable();
-  public error$ = this._subjects.error.asObservable();
+  public change$: Observable<any> = this._subjects.change.asObservable();
+  public docs$: Observable<any> = this._subjects.docs.asObservable();
+  public active$: Observable<any> = this._subjects.active.asObservable();
+  public complete$: Observable<any> = this._subjects.complete.asObservable();
+  public error$: Observable<any> = this._subjects.error.asObservable();
 
-  public localLastSeq$ = this._subjects.localLastSeq.asObservable();
-  public remoteLastSeq$ = this._subjects.remoteLastSeq.asObservable();
-  public remotePending$ = this._subjects.remotePending.asObservable();
+  public localLastSeq$: Observable<any> = this._subjects.localLastSeq.asObservable();
+  public remoteLastSeq$: Observable<any> = this._subjects.remoteLastSeq.asObservable();
+  public remotePending$: Observable<any> = this._subjects.remotePending.asObservable();
 
   constructor() {
 
