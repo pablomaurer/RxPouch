@@ -45,3 +45,34 @@ let pika = {
 
 // insert data
 pokemons.create(pika);
+
+pokemons.enableLiveDocs();
+
+setTimeout(() => {
+    console.log('2 seconds after enabling live docs');
+
+    let pika = {
+        _id: 'dreckmon', // will result in pokemon-pikachu
+        type: 'pokemon', // not needed, will be set anyway
+        name: 'dreckmon',
+        power: '120',
+        element: 'earth'
+    };
+
+    // insert data
+    pokemons.create(pika);
+}, 2000);
+
+setTimeout(() => {
+    console.log('4 seconds after disable live docs');
+    pokemons.disableLiveDocs();
+}, 4000);
+
+setTimeout(() => {
+    console.log('6 seconds after enabling live docs again');
+    pokemons.enableLiveDocs();
+}, 6000);
+
+setTimeout(() => {
+    console.log('8 seconds after enabling live docs again');
+}, 8000);
