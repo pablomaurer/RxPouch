@@ -4,12 +4,12 @@ export class Store<T extends IModel> {
 
   private _docs: T[] = [];
 
-  constructor(private _docsSubject) {
+  constructor(private _allDocsSubject) {
   }
 
   public setDocs(docs: any[]) {
     this._docs = docs;
-    this._docsSubject.next(this._docs);
+    this._allDocsSubject.next(this._docs);
   }
 
   public getDocs = () => {
@@ -49,13 +49,13 @@ export class Store<T extends IModel> {
       this._docs[index] = model;
       found = true;
     }
-    this._docsSubject.next(this._docs);
+    this._allDocsSubject.next(this._docs);
     return found;
   }
 
   public addToStore(model) {
     this._docs.push(model);
-    this._docsSubject.next(this._docs);
+    this._allDocsSubject.next(this._docs);
   }
 
   public removeFromStore(id: string): boolean {
@@ -65,7 +65,7 @@ export class Store<T extends IModel> {
       this._docs.splice(index, 1);
       found = true;
     }
-    this._docsSubject.next(this._docs);
+    this._allDocsSubject.next(this._docs);
     return found;
   }
 }
