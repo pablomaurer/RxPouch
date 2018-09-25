@@ -1,3 +1,6 @@
+# 0.6.5
+- fix: don't set filter and store to null, only set the data in them to null, so you can proxy to them
+
 # 0.6.4
 - fix: proxied functions to filter, store can only be created docs are enabled
 - fix: fix changes to work with rxjs5 and rxjs6, since in rxjs6 their is some strange behaviour

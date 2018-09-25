@@ -127,4 +127,11 @@ export class Filter<T extends IModel> {
     return found;
   }
 
+  // ------------------------------------------
+  // destroy
+  // ------------------------------------------
+  public destroy() {
+    this._filteredDocs = [];
+  }
+
 }

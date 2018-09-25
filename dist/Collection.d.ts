@@ -24,9 +24,7 @@ export declare class Collection<T extends IModel> {
     remove$: Observable<any>;
     docs$: Observable<T[]>;
     allDocs$: Observable<T[]>;
-    setFilter: any;
-    setSort: any;
-    extendComparator: any;
+    isLiveDocsEnabled: boolean;
     private user;
     constructor(_pouchdb: any, _allChanges$: any, _docType: string, _observableOptions?: ICollectionRxOptions);
     enableLiveDocs(): Promise<any>;
@@ -34,6 +32,9 @@ export declare class Collection<T extends IModel> {
     loadDocs(): void;
     destroy(): void;
     addHook: (hookName: string, fn: (doc: any) => any) => void;
+    setFilter: (filter: any, filterType: any) => void;
+    setSort: (sortDef: import("./Filter").ISort) => void;
+    extendComparator: (comparator: any) => void;
     get(id: string): any;
     create(doc: any): Promise<any>;
     update(doc: any): Promise<any>;

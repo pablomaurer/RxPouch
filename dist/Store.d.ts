@@ -5,6 +5,7 @@ export declare class Store<T extends IModel> {
     constructor(_docsSubject: any);
     setDocs(docs: any[]): void;
     getDocs: () => T[];
+    destroy(): void;
     get(id: string): T;
     getIndex(id: string): number;
     first(): T;

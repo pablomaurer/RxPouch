@@ -26,4 +26,5 @@ export declare class Filter<T extends IModel> {
     updateInStore(model: any): boolean;
     addToStore(model: any): boolean;
     removeFromStore(id: string): boolean;
+    destroy(): void;
 }

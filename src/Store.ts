@@ -16,6 +16,10 @@ export class Store<T extends IModel> {
     return this._docs;
   };
 
+  public destroy() {
+    this._docs = [];
+  }
+
   // ------------------------------------------
   // helpers
   // ------------------------------------------

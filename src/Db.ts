@@ -6,10 +6,14 @@ import {EHook, Hook} from "./Hooks";
 //const PouchDB = require('pouchdb/dist/pouchdb');
 //import PouchDB from 'pouchdb/dist/pouchdb';
 
-const PouchDB = require('pouchdb-core')
-  .plugin(require('pouchdb-adapter-http'))
-  .plugin(require('pouchdb-mapreduce'))
-  .plugin(require('pouchdb-replication'));
+const PouchDB = require('pouchdb-core');
+const PouchHttp = require('pouchdb-adapter-http');
+const PouchMapReduce = require('pouchdb-mapreduce');
+const PouchReplication = require('pouchdb-replication');
+
+PouchDB.plugin(PouchHttp);
+PouchDB.plugin(PouchMapReduce);
+PouchDB.plugin(PouchReplication);
 
 
 // still need to add your local pouchdb adapter:

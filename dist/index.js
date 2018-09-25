@@ -211,6 +211,9 @@ var Store = /** @class */ (function () {
         this._docs = docs;
         this._docsSubject.next(this._docs);
     };
+    Store.prototype.destroy = function () {
+        this._docs = [];
+    };
     // ------------------------------------------
     // helpers
     // ------------------------------------------
@@ -363,6 +366,12 @@ var Filter = /** @class */ (function () {
         this._docsSubject.next(this._filteredDocs);
         return found;
     };
+    // ------------------------------------------
+    // destroy
+    // ------------------------------------------
+    Filter.prototype.destroy = function () {
+        this._filteredDocs = [];
+    };
     return Filter;
 }());
 
@@ -437,9 +446,15 @@ var Collection = /** @class */ (function () {
         this._subsOpts = [];
         this._allDocsSubject = new rxjs.BehaviorSubject([]);
         this._docsSubject = new rxjs.BehaviorSubject([]);
+        this._store = new Store(this._allDocsSubject);
+        this._filter = new Filter(this._docsSubject, this._store.getDocs, this._observableOptions.filter, this._observableOptions.filterType, this._observableOptions.sort);
         this.docs$ = this._docsSubject.asObservable();
         this.allDocs$ = this._allDocsSubject.asObservable();
+        this.isLiveDocsEnabled = false;
         this.addHook = this._hooks.addHook;
+        this.setFilter = this._filter.setFilter;
+        this.setSort = this._filter.setSort;
+        this.extendComparator = this._filter.extendComparator;
         if (this._observableOptions.user) {
             this._subsOpts.push(this._observableOptions.user.subscribe(function (next) {
                 _this.user = next;
@@ -464,14 +479,9 @@ var Collection = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (this._store)
+                        if (this.isLiveDocsEnabled)
                             return [2 /*return*/];
-                        this._store = new Store(this._allDocsSubject);
-                        this._filter = new Filter(this._docsSubject, this._store.getDocs, this._observableOptions.filter, this._observableOptions.filterType, this._observableOptions.sort);
-                        // add proxy functions to filter and store
-                        this.setFilter = this._filter.setFilter;
-                        this.setSort = this._filter.setSort;
-                        this.extendComparator = this._filter.extendComparator;
+                        this.isLiveDocsEnabled = true;
                         return [4 /*yield*/, this.all()];
                     case 1:
                         res = _a.sent();
@@ -494,11 +504,11 @@ var Collection = /** @class */ (function () {
         });
     };
     Collection.prototype.disableLiveDocs = function () {
-        if (!this._store)
+        if (!this.isLiveDocsEnabled)
             return;
         this._subs.forEach(function (sub) { return sub.unsubscribe(); });
-        this._filter = null;
-        this._store = null;
+        this._filter.destroy();
+        this._store.destroy();
     };
     // ------------------------------------------
     // methods
@@ -626,10 +636,13 @@ var Collection = /** @class */ (function () {
 
 //const PouchDB = require('pouchdb/dist/pouchdb');
 //import PouchDB from 'pouchdb/dist/pouchdb';
-var PouchDB = require('pouchdb-core')
-    .plugin(require('pouchdb-adapter-http'))
-    .plugin(require('pouchdb-mapreduce'))
-    .plugin(require('pouchdb-replication'));
+var PouchDB = require('pouchdb-core');
+var PouchHttp = require('pouchdb-adapter-http');
+var PouchMapReduce = require('pouchdb-mapreduce');
+var PouchReplication = require('pouchdb-replication');
+PouchDB.plugin(PouchHttp);
+PouchDB.plugin(PouchMapReduce);
+PouchDB.plugin(PouchReplication);
 // still need to add your local pouchdb adapter:
 // browser: pouchdb-adapter-idb
 // node:    pouchdb-adapter-leveldb

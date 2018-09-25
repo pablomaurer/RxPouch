@@ -20,8 +20,9 @@ export class Collection<T extends IModel> {
 
   private _allDocsSubject: BehaviorSubject<T[]> = new BehaviorSubject([]);
   private _docsSubject: BehaviorSubject<T[]> = new BehaviorSubject([]);
-  private _store: Store<T>;
-  private _filter: Filter<T>;
+  private _store: Store<T> = new Store(this._allDocsSubject);
+  private _filter: Filter<T> = new Filter(this._docsSubject, this._store.getDocs,
+  this._observableOptions.filter, this._observableOptions.filterType, this._observableOptions.sort);
 
   public changes$: Observable<any>;
   public insert$: Observable<any>;
@@ -30,9 +31,7 @@ export class Collection<T extends IModel> {
   public docs$: Observable<T[]> = this._docsSubject.asObservable();
   public allDocs$: Observable<T[]> = this._allDocsSubject.asObservable();
 
-  public setFilter;
-  public setSort;
-  public extendComparator;
+  public isLiveDocsEnabled: boolean = false;
 
   // todo rxjs get out current value, instead this? but if you want to also support declarative way leave it here
   private user: string;
@@ -75,16 +74,8 @@ export class Collection<T extends IModel> {
   // live docs$
   // ------------------------------------------
   public async enableLiveDocs() {
-    if (this._store) return;
-
-    this._store = new Store(this._allDocsSubject);
-    this._filter = new Filter(this._docsSubject, this._store.getDocs,
-      this._observableOptions.filter, this._observableOptions.filterType, this._observableOptions.sort);
-
-    // add proxy functions to filter and store
-    this.setFilter = this._filter.setFilter;
-    this.setSort = this._filter.setSort;
-    this.extendComparator = this._filter.extendComparator;
+    if (this.isLiveDocsEnabled) return;
+    this.isLiveDocsEnabled = true;
 
     let res = await this.all();
     this._store.setDocs(res);
@@ -114,10 +105,10 @@ export class Collection<T extends IModel> {
   }
 
   public disableLiveDocs() {
-    if (!this._store) return;
+    if (!this.isLiveDocsEnabled) return;
     this._subs.forEach(sub => sub.unsubscribe());
-    this._filter = null;
-    this._store = null;
+    this._filter.destroy();
+    this._store.destroy();
   }
 
   // ------------------------------------------
@@ -136,6 +127,9 @@ export class Collection<T extends IModel> {
   }
 
   public addHook = this._hooks.addHook;
+  public setFilter = this._filter.setFilter;
+  public setSort = this._filter.setSort;
+  public extendComparator = this._filter.extendComparator;
 
   // ------------------------------------------
   // crud
