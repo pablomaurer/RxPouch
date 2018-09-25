@@ -1,3 +1,8 @@
+# 0.6.4
+- fix: proxied functions to filter, store can only be created docs are enabled
+- fix: fix changes to work with rxjs5 and rxjs6, since in rxjs6 their is some strange behaviour
+- fix: revert back to custom-builds for pouchdb
+
 # 0.6.3
 - fixed wrongly generated types for observables
 

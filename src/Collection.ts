@@ -30,6 +30,10 @@ export class Collection<T extends IModel> {
   public docs$: Observable<T[]> = this._docsSubject.asObservable();
   public allDocs$: Observable<T[]> = this._allDocsSubject.asObservable();
 
+  public setFilter;
+  public setSort;
+  public extendComparator;
+
   // todo rxjs get out current value, instead this? but if you want to also support declarative way leave it here
   private user: string;
 
@@ -76,6 +80,11 @@ export class Collection<T extends IModel> {
     this._store = new Store(this._allDocsSubject);
     this._filter = new Filter(this._docsSubject, this._store.getDocs,
       this._observableOptions.filter, this._observableOptions.filterType, this._observableOptions.sort);
+
+    // add proxy functions to filter and store
+    this.setFilter = this._filter.setFilter;
+    this.setSort = this._filter.setSort;
+    this.extendComparator = this._filter.extendComparator;
 
     let res = await this.all();
     this._store.setDocs(res);
@@ -127,9 +136,6 @@ export class Collection<T extends IModel> {
   }
 
   public addHook = this._hooks.addHook;
-  public setFilter = this._filter.setFilter;
-  public setSort = this._filter.setSort;
-  public extendComparator = this._filter.extendComparator;
 
   // ------------------------------------------
   // crud

@@ -1,6 +1,6 @@
 {
   "name": "rx-pouch",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "Reactive PouchDB",
   "repository": "https://github.com/mnewmedia/RxPouch",
   "author": "Pablo Maurer",
@@ -46,7 +46,10 @@
   "dependencies": {
     "deep-array-filter": "^1.0.4",
     "fast-sort": "^1.5.4",
-    "pouchdb": "^7.0.0",
+    "pouchdb-adapter-http": "^7.0.0",
+    "pouchdb-core": "^7.0.0",
+    "pouchdb-mapreduce": "^7.0.0",
+    "pouchdb-replication": "^7.0.0",
     "rxjs": "^5.5.12"
   },
   "devDependencies": {

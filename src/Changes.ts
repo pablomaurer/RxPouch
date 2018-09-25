@@ -31,13 +31,18 @@ export class Changes {
 
     // change
     this._subs.push(
-      fromEvent(this.pouchChanges, 'change').subscribe(ev => {
+      fromEvent(this.pouchChanges, 'change').subscribe((ev: any) => {
 
-        let op = ev[0].doc._rev.startsWith('1-') ? 'INSERT' : 'UPDATE';
-        if (ev[0].doc._deleted) op = 'REMOVE';
-        ev[0].op = op;
+        // fix rxjs 6, no idea why they give an array?
+        if (Array.isArray(ev)) {
+          ev = ev[0];
+        }
 
-        this._subjects.change.next(ev[0])
+        let op = ev.doc._rev.startsWith('1-') ? 'INSERT' : 'UPDATE';
+        if (ev.doc._deleted) op = 'REMOVE';
+        ev.op = op;
+
+        this._subjects.change.next(ev)
       })
     );
 

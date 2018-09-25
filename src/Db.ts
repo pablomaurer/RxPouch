@@ -3,12 +3,14 @@ import {Changes} from "./Changes";
 import {Collection, ICollectionRxOptions} from "./Collection";
 import {EHook, Hook} from "./Hooks";
 
-const PouchDB = require('pouchdb');
+//const PouchDB = require('pouchdb/dist/pouchdb');
+//import PouchDB from 'pouchdb/dist/pouchdb';
 
-//const PouchDB = require('pouchdb-core')
-  //.plugin(require('pouchdb-adapter-http'))
-  //.plugin(require('pouchdb-mapreduce'))
-  //.plugin(require('pouchdb-replication'));
+const PouchDB = require('pouchdb-core')
+  .plugin(require('pouchdb-adapter-http'))
+  .plugin(require('pouchdb-mapreduce'))
+  .plugin(require('pouchdb-replication'));
+
 
 // still need to add your local pouchdb adapter:
 // browser: pouchdb-adapter-idb

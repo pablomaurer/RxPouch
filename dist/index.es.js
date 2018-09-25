@@ -165,11 +165,15 @@ var Changes = /** @class */ (function () {
         this._isListening = true;
         // change
         this._subs.push(fromEvent(this.pouchChanges, 'change').subscribe(function (ev) {
-            var op = ev[0].doc._rev.startsWith('1-') ? 'INSERT' : 'UPDATE';
-            if (ev[0].doc._deleted)
+            // fix rxjs 6, no idea why they give an array?
+            if (Array.isArray(ev)) {
+                ev = ev[0];
+            }
+            var op = ev.doc._rev.startsWith('1-') ? 'INSERT' : 'UPDATE';
+            if (ev.doc._deleted)
                 op = 'REMOVE';
-            ev[0].op = op;
-            _this._subjects.change.next(ev[0]);
+            ev.op = op;
+            _this._subjects.change.next(ev);
         }));
         // complete
         this._subs.push(fromEvent(this.pouchChanges, 'complete').subscribe(function (info) {
@@ -434,9 +438,6 @@ var Collection = /** @class */ (function () {
         this.docs$ = this._docsSubject.asObservable();
         this.allDocs$ = this._allDocsSubject.asObservable();
         this.addHook = this._hooks.addHook;
-        this.setFilter = this._filter.setFilter;
-        this.setSort = this._filter.setSort;
-        this.extendComparator = this._filter.extendComparator;
         if (this._observableOptions.user) {
             this._subsOpts.push(this._observableOptions.user.subscribe(function (next) {
                 _this.user = next;
@@ -465,6 +466,10 @@ var Collection = /** @class */ (function () {
                             return [2 /*return*/];
                         this._store = new Store(this._allDocsSubject);
                         this._filter = new Filter(this._docsSubject, this._store.getDocs, this._observableOptions.filter, this._observableOptions.filterType, this._observableOptions.sort);
+                        // add proxy functions to filter and store
+                        this.setFilter = this._filter.setFilter;
+                        this.setSort = this._filter.setSort;
+                        this.extendComparator = this._filter.extendComparator;
                         return [4 /*yield*/, this.all()];
                     case 1:
                         res = _a.sent();
@@ -617,11 +622,12 @@ var Collection = /** @class */ (function () {
     return Collection;
 }());
 
-var PouchDB = require('pouchdb');
-//const PouchDB = require('pouchdb-core')
-//.plugin(require('pouchdb-adapter-http'))
-//.plugin(require('pouchdb-mapreduce'))
-//.plugin(require('pouchdb-replication'));
+//const PouchDB = require('pouchdb/dist/pouchdb');
+//import PouchDB from 'pouchdb/dist/pouchdb';
+var PouchDB = require('pouchdb-core')
+    .plugin(require('pouchdb-adapter-http'))
+    .plugin(require('pouchdb-mapreduce'))
+    .plugin(require('pouchdb-replication'));
 // still need to add your local pouchdb adapter:
 // browser: pouchdb-adapter-idb
 // node:    pouchdb-adapter-leveldb
