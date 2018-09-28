@@ -1,8 +1,8 @@
 {
-  "name": "rx-pouch",
+  "name": "@fluidnotions/rx-pouch",
   "version": "0.6.8",
   "description": "Reactive PouchDB",
-  "repository": "https://github.com/mnewmedia/RxPouch",
+  "repository": "https://github.com/fluidnotions/RxPouch",
   "author": "Pablo Maurer",
   "license": "MIT",
   "private": false,

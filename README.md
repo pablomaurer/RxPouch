@@ -1,3 +1,5 @@
+### updated rxjs to 6.0.0
+
 # Under heavy development
 You can use it, but stuff might still changes quickly, until we are at version 1.0.0
 
