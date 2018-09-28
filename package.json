@@ -1,6 +1,6 @@
 {
-  "name": "@fluidnotions/rx-pouch",
-  "version": "0.6.7",
+  "name": "rx-pouch",
+  "version": "0.6.8",
   "description": "Reactive PouchDB",
   "repository": "https://github.com/mnewmedia/RxPouch",
   "author": "Pablo Maurer",
