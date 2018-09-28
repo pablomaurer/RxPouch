@@ -1,7 +1,6 @@
 'use strict';
 
 var rxjs = require('rxjs');
-var fromEvent = require('rxjs/observable/fromEvent');
 var operators = require('rxjs/operators');
 
 /*! *****************************************************************************
@@ -87,7 +86,7 @@ var Sync = /** @class */ (function () {
         this.pouchSync = pouchSync;
         this._isListening = true;
         // change
-        this._subs.push(fromEvent.fromEvent(this.pouchSync, 'change').subscribe(function (ev) {
+        this._subs.push(rxjs.fromEvent(this.pouchSync, 'change').subscribe(function (ev) {
             if (ev.direction == 'pull') {
                 _this._subjects.remoteLastSeq.next(ev.change.last_seq); // string
                 _this._subjects.remotePending.next(ev.pending);
@@ -97,24 +96,24 @@ var Sync = /** @class */ (function () {
             }
         }));
         // docs
-        this._subs.push(fromEvent.fromEvent(this.pouchSync, 'change').subscribe(function (ev) {
+        this._subs.push(rxjs.fromEvent(this.pouchSync, 'change').subscribe(function (ev) {
             if (_this._subjects.docs.observers.length === 0 || ev.direction !== 'pull')
                 return;
             ev.change.docs.forEach(function (doc) { return _this._subjects.docs.next(doc); });
         }));
         // error
-        this._subs.push(fromEvent.fromEvent(this.pouchSync, 'error').subscribe(function (ev) {
+        this._subs.push(rxjs.fromEvent(this.pouchSync, 'error').subscribe(function (ev) {
             _this._subjects.error.next(ev);
         }));
         // active
-        this._subs.push(fromEvent.fromEvent(this.pouchSync, 'active').subscribe(function () {
+        this._subs.push(rxjs.fromEvent(this.pouchSync, 'active').subscribe(function () {
             _this._subjects.active.next(true);
         }));
-        this._subs.push(fromEvent.fromEvent(this.pouchSync, 'paused').subscribe(function () {
+        this._subs.push(rxjs.fromEvent(this.pouchSync, 'paused').subscribe(function () {
             _this._subjects.active.next(false);
         }));
         // complete
-        this._subs.push(fromEvent.fromEvent(this.pouchSync, 'complete').subscribe(function (info) {
+        this._subs.push(rxjs.fromEvent(this.pouchSync, 'complete').subscribe(function (info) {
             _this._subjects.complete.next(info);
         }));
         this.pouchSync.on('change', function (info) {
@@ -166,7 +165,7 @@ var Changes = /** @class */ (function () {
         this.pouchChanges = pouchChanges;
         this._isListening = true;
         // change
-        this._subs.push(fromEvent.fromEvent(this.pouchChanges, 'change').subscribe(function (ev) {
+        this._subs.push(rxjs.fromEvent(this.pouchChanges, 'change').subscribe(function (ev) {
             // fix rxjs 6, no idea why they give an array?
             if (Array.isArray(ev)) {
                 ev = ev[0];
@@ -178,11 +177,11 @@ var Changes = /** @class */ (function () {
             _this._subjects.change.next(ev);
         }));
         // complete
-        this._subs.push(fromEvent.fromEvent(this.pouchChanges, 'complete').subscribe(function (info) {
+        this._subs.push(rxjs.fromEvent(this.pouchChanges, 'complete').subscribe(function (info) {
             _this._subjects.complete.next(info);
         }));
         // error
-        this._subs.push(fromEvent.fromEvent(this.pouchChanges, 'error').subscribe(function (ev) {
+        this._subs.push(rxjs.fromEvent(this.pouchChanges, 'error').subscribe(function (ev) {
             _this._subjects.error.next(ev);
         }));
     };
@@ -457,7 +456,7 @@ var Collection = /** @class */ (function () {
         this.setSort = this._filter.setSort;
         this.extendComparator = this._filter.extendComparator;
         if (this._observableOptions.user) {
-            this._subsOpts.push(this._observableOptions.user.filter(function (user) { return user; }).subscribe(function (next) {
+            this._subsOpts.push(this._observableOptions.user.pipe(operators.filter(function (user) { return user; })).subscribe(function (next) {
                 _this.isLiveDocsEnabled && _this.loadDocs();
             }));
         }
@@ -615,7 +614,7 @@ var Collection = /** @class */ (function () {
                     case 0:
                         endkey = this._docType + '-\uffff';
                         if (!this._observableOptions.user) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this._observableOptions.user.first(function (user) { return user; }).toPromise()];
+                        return [4 /*yield*/, this._observableOptions.user.pipe(operators.first(function (user) { return user; })).toPromise()];
                     case 1:
                         user = _a.sent();
                         endkey = this._docType + '-' + user + '\uffff';

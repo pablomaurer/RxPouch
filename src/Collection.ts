@@ -2,7 +2,7 @@ import {BehaviorSubject, Observable, Subscription} from "rxjs";
 import {Store} from "./Store";
 import {Filter} from "./Filter";
 import {IModel} from "./interfaces/IModel";
-import {filter} from "rxjs/operators";
+import {filter, first} from "rxjs/operators";
 import {EHook, Hook} from "./Hooks";
 import {ISort} from "./interfaces/ISort";
 
@@ -41,7 +41,7 @@ export class Collection<T extends IModel> {
 
     if (this._observableOptions.user) {
       this._subsOpts.push(
-        this._observableOptions.user.filter(user => user as any).subscribe(next => {
+        this._observableOptions.user.pipe(filter(user => user as any)).subscribe(next => {
           this.isLiveDocsEnabled && this.loadDocs();
         })
       );
@@ -178,7 +178,7 @@ export class Collection<T extends IModel> {
   public async all() {
     let endkey = this._docType + '-\uffff';
     if (this._observableOptions.user) {
-      let user = await this._observableOptions.user.first(user => user as any).toPromise();
+      let user = await this._observableOptions.user.pipe(first(user => user as any)).toPromise();
       endkey = this._docType + '-' + user + '\uffff'
     }
 

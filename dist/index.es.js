@@ -1,6 +1,5 @@
-import { BehaviorSubject, Subject } from 'rxjs';
-import { fromEvent } from 'rxjs/observable/fromEvent';
-import { filter } from 'rxjs/operators';
+import { BehaviorSubject, Subject, fromEvent } from 'rxjs';
+import { filter, first } from 'rxjs/operators';
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation. All rights reserved.
@@ -455,7 +454,7 @@ var Collection = /** @class */ (function () {
         this.setSort = this._filter.setSort;
         this.extendComparator = this._filter.extendComparator;
         if (this._observableOptions.user) {
-            this._subsOpts.push(this._observableOptions.user.filter(function (user) { return user; }).subscribe(function (next) {
+            this._subsOpts.push(this._observableOptions.user.pipe(filter(function (user) { return user; })).subscribe(function (next) {
                 _this.isLiveDocsEnabled && _this.loadDocs();
             }));
         }
@@ -613,7 +612,7 @@ var Collection = /** @class */ (function () {
                     case 0:
                         endkey = this._docType + '-\uffff';
                         if (!this._observableOptions.user) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this._observableOptions.user.first(function (user) { return user; }).toPromise()];
+                        return [4 /*yield*/, this._observableOptions.user.pipe(first(function (user) { return user; })).toPromise()];
                     case 1:
                         user = _a.sent();
                         endkey = this._docType + '-' + user + '\uffff';

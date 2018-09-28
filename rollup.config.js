@@ -15,8 +15,7 @@ export default {
     ],
     external: [
         'rxjs',
-        'rxjs/operators',
-        'rxjs/observable/fromEvent'
+        'rxjs/operators'
     ],
     plugins: [
         typescript({
