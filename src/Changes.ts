@@ -1,5 +1,4 @@
-import {BehaviorSubject, Observable, Subject, Subscription} from "rxjs";
-import {fromEvent} from "rxjs/observable/fromEvent";
+import {BehaviorSubject, Observable, Subject, Subscription, fromEvent} from "rxjs";
 
 export class Changes {
 

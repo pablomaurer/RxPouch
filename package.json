@@ -5,6 +5,7 @@
   "repository": "https://github.com/mnewmedia/RxPouch",
   "author": "Pablo Maurer",
   "license": "MIT",
+  "private": false,
   "keywords": [
     "pouchdb",
     "rxjs",
@@ -50,7 +51,7 @@
     "pouchdb-core": "^7.0.0",
     "pouchdb-mapreduce": "^7.0.0",
     "pouchdb-replication": "^7.0.0",
-    "rxjs": "^5.5.12"
+    "rxjs": "^6.3.3"
   },
   "devDependencies": {
     "@types/jest": "^23.3.9",
@@ -61,6 +62,6 @@
     "typescript": "^3.1.6"
   },
   "peerDependencies": {
-    "rxjs": "5.x"
+    "rxjs": "6.x"
   }
 }
