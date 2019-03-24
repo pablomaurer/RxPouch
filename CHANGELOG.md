@@ -1,3 +1,9 @@
+# 0.6.8
+- chore: updated rollup
+
+# 0.6.7
+- updated to rxjs 6
+
 # 0.6.6
 - fix: set types for collection.setSort explicit, to avoid strange import in type definitions
 - refactor: use user observable in a more rxjs-y way

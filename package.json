@@ -1,6 +1,6 @@
 {
   "name": "rx-pouch",
-  "version": "0.6.7",
+  "version": "0.6.8",
   "description": "Reactive PouchDB",
   "repository": "https://github.com/mnewmedia/RxPouch",
   "author": "Pablo Maurer",
@@ -56,8 +56,8 @@
   "devDependencies": {
     "@types/jest": "^23.3.9",
     "jest": "^23.6.0",
-    "rollup": "^0.66.6",
-    "rollup-plugin-typescript2": "^0.18.0",
+    "rollup": "^1.7.0",
+    "rollup-plugin-typescript2": "^0.20.1",
     "ts-jest": "^23.10.4",
     "typescript": "^3.1.6"
   },
