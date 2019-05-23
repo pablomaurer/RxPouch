@@ -1,6 +1,6 @@
 {
   "name": "rx-pouch",
-  "version": "0.6.8",
+  "version": "0.6.9",
   "description": "Reactive PouchDB",
   "repository": "https://github.com/mnewmedia/RxPouch",
   "author": "Pablo Maurer",
@@ -13,6 +13,10 @@
   ],
   "main": "dist/index.js",
   "module": "dist/index.es.js",
+  "browser": {
+    "./dist/index.js": "./dist/index-browser.js",
+    "./dist/index.es.js": "./dist/index-browser.es.js"
+  },
   "files": [
     "dist"
   ],
@@ -24,7 +28,7 @@
     "test-watch": "npx jest --watch",
     "docs-dev": "docz dev",
     "docs-build": "docz build",
-    "update-example": "rollup -c && cp -R ./dist/ ./examples/node/node_modules/rx-pouch/dist/"
+    "update-example": "npm run build && cp -R ./dist/ ./examples/node/node_modules/rx-pouch/dist/"
   },
   "jest": {
     "transform": {
@@ -51,15 +55,19 @@
     "pouchdb-core": "^7.0.0",
     "pouchdb-mapreduce": "^7.0.0",
     "pouchdb-replication": "^7.0.0",
-    "rxjs": "^6.3.3"
+    "rxjs": "^6.5.2"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.9",
-    "jest": "^23.6.0",
-    "rollup": "^1.7.0",
-    "rollup-plugin-typescript2": "^0.20.1",
-    "ts-jest": "^23.10.4",
-    "typescript": "^3.1.6"
+    "@types/jest": "^24.0.13",
+    "jest": "^24.8.0",
+    "rollup": "^1.12.3",
+    "rollup-plugin-auto-external": "^2.0.0",
+    "rollup-plugin-commonjs": "^10.0.0",
+    "rollup-plugin-json": "^4.0.0",
+    "rollup-plugin-node-resolve": "^5.0.0",
+    "rollup-plugin-typescript2": "^0.21.1",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.4.5"
   },
   "peerDependencies": {
     "rxjs": "6.x"

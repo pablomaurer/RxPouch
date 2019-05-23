@@ -1,5 +1,8 @@
-import typescript from 'rollup-plugin-typescript2'
-import pkg from './package.json'
+import autoExternal from 'rollup-plugin-auto-external';
+import commonjs from 'rollup-plugin-commonjs';
+
+import typescript from 'rollup-plugin-typescript2';
+import pkg from './package.json';
 
 export default {
     input: 'src/Db.ts',
@@ -18,6 +21,8 @@ export default {
         'rxjs/operators'
     ],
     plugins: [
+        autoExternal(),
+        commonjs(),
         typescript({
             typescript: require('typescript'),
             clean: true,

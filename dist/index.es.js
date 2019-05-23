@@ -1,5 +1,9 @@
 import { Subject, BehaviorSubject, fromEvent } from 'rxjs';
 import { filter, first } from 'rxjs/operators';
+import PouchDB from 'pouchdb-core';
+import PouchHttp from 'pouchdb-adapter-http';
+import PouchMapReduce from 'pouchdb-mapreduce';
+import PouchReplication from 'pouchdb-replication';
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation. All rights reserved.
@@ -432,8 +436,8 @@ var Hook = /** @class */ (function () {
 var Collection = /** @class */ (function () {
     function Collection(_pouchdb, _allChanges$, _docType, _observableOptions) {
         // todo observable filters
-        if (_observableOptions === void 0) { _observableOptions = {}; }
         var _this = this;
+        if (_observableOptions === void 0) { _observableOptions = {}; }
         this._pouchdb = _pouchdb;
         this._allChanges$ = _allChanges$;
         this._docType = _docType;
@@ -634,12 +638,6 @@ var Collection = /** @class */ (function () {
     return Collection;
 }());
 
-//const PouchDB = require('pouchdb/dist/pouchdb');
-//import PouchDB from 'pouchdb/dist/pouchdb';
-var PouchDB = require('pouchdb-core');
-var PouchHttp = require('pouchdb-adapter-http');
-var PouchMapReduce = require('pouchdb-mapreduce');
-var PouchReplication = require('pouchdb-replication');
 PouchDB.plugin(PouchHttp);
 PouchDB.plugin(PouchMapReduce);
 PouchDB.plugin(PouchReplication);

@@ -3,13 +3,10 @@ import {Changes} from "./Changes";
 import {Collection, ICollectionRxOptions} from "./Collection";
 import {EHook, Hook} from "./Hooks";
 
-//const PouchDB = require('pouchdb/dist/pouchdb');
-//import PouchDB from 'pouchdb/dist/pouchdb';
-
-const PouchDB = require('pouchdb-core');
-const PouchHttp = require('pouchdb-adapter-http');
-const PouchMapReduce = require('pouchdb-mapreduce');
-const PouchReplication = require('pouchdb-replication');
+import PouchDB from 'pouchdb-core';
+import PouchHttp from 'pouchdb-adapter-http';
+import PouchMapReduce from 'pouchdb-mapreduce';
+import PouchReplication from 'pouchdb-replication';
 
 PouchDB.plugin(PouchHttp);
 PouchDB.plugin(PouchMapReduce);

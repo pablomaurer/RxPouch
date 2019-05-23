@@ -1,8 +1,8 @@
 # 0.6.8
-- chore: updated rollup
+- chore: updated rollup and rollup config
 
 # 0.6.7
-- updated to rxjs 6
+- chore: updated to rxjs 6
 
 # 0.6.6
 - fix: set types for collection.setSort explicit, to avoid strange import in type definitions
